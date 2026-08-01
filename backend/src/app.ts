@@ -11,8 +11,8 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
 app.use(helmet());
+app.use(express.json());
 app.use(pinoHttp({logger}))
 
 app.get("/health", (req: Request, res: Response) => {

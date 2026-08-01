@@ -13,6 +13,7 @@ async function start(): Promise<void> {
         });
     } catch (e) {
         console.error("Failed to connect:", e);
+        process.exit(1);
     }
 }
 
