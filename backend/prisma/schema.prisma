@@ -8,14 +8,12 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  id            Int            @id @default(autoincrement())
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String         @map("password_hash")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
   documents     Document[]
   refreshTokens RefreshToken[]
 
@@ -23,51 +21,41 @@ model User {
 }
 
 model RefreshToken {
-  id Int @id @default(autoincrement())
-
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
-
-  tokenHash String @map("token_hash")
-
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  tokenHash String   @map("token_hash")
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
 
+  @@index([userId], map: "refresh_tokens_user_id_fkey")
   @@map("refresh_tokens")
 }
 
 model Document {
-  id Int @id @default(autoincrement())
-
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
-
-  title String
-
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  title     String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  blocks    Block[]
+  user      User     @relation(fields: [userId], references: [id])
 
-  blocks Block[]
-
+  @@index([userId], map: "documents_user_id_fkey")
   @@map("documents")
 }
 
-
-
 model Block {
-  id Int @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
+  documentId Int       @map("document_id")
+  type       BlockType
+  content    String    @db.LongText
+  position   Int
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  documentId Int @map("document_id")
-
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  type BlockType
-  content Json
-  position Int
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  @@index([documentId], map: "blocks_document_id_fkey")
   @@map("blocks")
 }
 
