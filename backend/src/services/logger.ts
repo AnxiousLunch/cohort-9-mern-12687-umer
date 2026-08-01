@@ -1,0 +1,1 @@
+// Serves as a starting point for pino logger
