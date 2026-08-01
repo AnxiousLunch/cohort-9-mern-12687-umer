@@ -5,18 +5,20 @@ import logger from "../services/logger.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto"
+import {z} from "zod";
 
 
 
 function requireEnv(name: string): string {
     const value = process.env[name];
     if (!value) {
+        logger.error(`Missing required environment variable: ${name}`);
         throw new Error(`Missing required environment variable: ${name}`);
     }
     return value;
 }
 
-const ACCESS_SECRET = requireEnv("JWT_SECRET");
+const ACCESS_SECRET = requireEnv("ACCESS_SECRET");
 const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 
 
@@ -32,7 +34,7 @@ const user_tokens = (user_id: String, username: String) => {
 }
 
 export async function register(req: Request, res: Response, next: NextFunction) {
-    const { username, email, password } = req.body();
+    const { username, email, password } = req.body;
 
     const isExisting = await prisma.user.findFirst({
         where: { OR: [{ username }, { email }] }
@@ -79,9 +81,19 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 export async function login(req: Request, res: Response, next: NextFunction) {
     const { identifier, password } = req.body;
 
-    const user = await prisma.user.findFirst({
-        where: { OR: [{ email: identifier }, { username: identifier }] }
-    });
+    const is_identifier_email = z.email().safeParse(identifier);
+
+
+    const user = is_identifier_email ? (
+        await prisma.user.findFirst({
+                where: {email: identifier}
+            }
+        )
+    ) : (
+        await prisma.user.findFirst({
+            where: {username: identifier}
+        })
+    );
 
     if (!user) {
         logger.info("User does not exist");
@@ -89,6 +101,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
             msg: "User does not exist!"
         });
         return;
+    }
+    const is_password_valid = bcrypt.compare(user.passwordHash, password);
+
+    if (!is_password_valid) {
+        logger.info("Invalid credentials!");
+        res.status(404).json({
+            msg: "Invalid Credentials!"
+        });
     }
 
     logger.info("User found, can log in");
@@ -103,7 +123,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     });
 
 
-    return res.status(201).json({
+    return res.status(200).json({
         msg: "Logged in successfully",
         access_token,
         user: {
