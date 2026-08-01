@@ -4,25 +4,38 @@ import type { NextFunction, Response, Request } from "express";
 import logger from "../services/logger.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { success } from "zod";
+import crypto from "node:crypto"
+
+
+
+function requireEnv(name: string): string {
+    const value = process.env[name];
+    if (!value) {
+        throw new Error(`Missing required environment variable: ${name}`);
+    }
+    return value;
+}
+
+const ACCESS_SECRET = requireEnv("JWT_SECRET");
+const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 
 
 const user_tokens = (user_id: String, username: String) => {
     const access_token = jwt.sign(
-        {user_id, username}, "ACCESS_SECRET", {expiresIn: "1d"}
+        { user_id, username }, ACCESS_SECRET, { expiresIn: "1d" }
     );
     const refresh_token = jwt.sign(
-        {user_id, username}, "REFRESH_TOKEN", {expiresIn: "7d"}
+        { user_id, username }, REFRESH_SECRET, { expiresIn: "7d" }
     );
 
-    return {access_token, refresh_token}
+    return { access_token, refresh_token }
 }
 
 export async function register(req: Request, res: Response, next: NextFunction) {
-    const {username, email, password} = req.body();
+    const { username, email, password } = req.body();
 
     const isExisting = await prisma.user.findFirst({
-        where: {OR: [{username}, {email}]}
+        where: { OR: [{ username }, { email }] }
     });
 
     if (isExisting) {
@@ -36,12 +49,19 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
     const user = await prisma.user.create({
         data: {
-            username, email, 
+            username, email,
             passwordHash: await bcrypt.hash(password, 10)
         }
     });
 
-    const {access_token, refresh_token} = user_tokens(user.id.toString(), user.username);
+    const { access_token, refresh_token } = user_tokens(user.id.toString(), user.username);
+
+    res.cookie('refreshToken', refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(201).json({
         success: true,
@@ -57,10 +77,10 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 }
 
 export async function login(req: Request, res: Response, next: NextFunction) {
-    const {identifier, password} = req.body;
+    const { identifier, password } = req.body;
 
     const user = await prisma.user.findFirst({
-        where: {OR: [{email: identifier}, {username: identifier}]}
+        where: { OR: [{ email: identifier }, { username: identifier }] }
     });
 
     if (!user) {
@@ -73,7 +93,16 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     logger.info("User found, can log in");
 
-    const {access_token, refresh_token} = user_tokens(user.id.toString(), user.username);
+    const { access_token, refresh_token } = user_tokens(user.id.toString(), user.username);
+
+    res.cookie('refreshToken', refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+
     return res.status(201).json({
         msg: "Logged in successfully",
         access_token,
@@ -86,6 +115,40 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
 }
 
-export async function logout(req: Request, res: Response, next: NextFunction) {
+export async function logout(req: Request, res: Response) {
+    const refreshToken = req.cookies?.refreshToken;
 
+    if (refreshToken) {
+        const hashedToken = crypto.createHash("sha256")
+                            .update(refreshToken).digest("hex");
+
+        try {
+            await prisma.refreshToken.deleteMany({
+                where: {
+                    tokenHash: hashedToken,
+                },
+            });
+        } catch (err) {
+            console.error(
+                "Failed to delete refresh token from database during logout:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                msg: "Failed to log out. Please try again.",
+            });
+        }
+    }
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    });
+
+    return res.json({
+        success: true,
+        msg: "Logged out successfully.",
+    });
 }
