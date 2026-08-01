@@ -8,7 +8,6 @@ import crypto from "node:crypto"
 import {z} from "zod";
 
 
-
 function requireEnv(name: string): string {
     const value = process.env[name];
     if (!value) {
@@ -22,13 +21,26 @@ const ACCESS_SECRET = requireEnv("ACCESS_SECRET");
 const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 
 
-const user_tokens = (user_id: String, username: String) => {
+const user_tokens = async (user_id: number, username: string) => {
     const access_token = jwt.sign(
         { user_id, username }, ACCESS_SECRET, { expiresIn: "1d" }
     );
     const refresh_token = jwt.sign(
         { user_id, username }, REFRESH_SECRET, { expiresIn: "7d" }
     );
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    const token_hash = crypto.createHash("sha256").update(refresh_token).digest("hex");
+
+    await prisma.refreshToken.create({
+        data: {
+            userId: user_id,
+            tokenHash: token_hash,
+            expiresAt
+        }
+    })
 
     return { access_token, refresh_token }
 }
@@ -56,7 +68,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
         }
     });
 
-    const { access_token, refresh_token } = user_tokens(user.id.toString(), user.username);
+    const { access_token, refresh_token } = await user_tokens(user.id, user.username);
 
     res.cookie('refreshToken', refresh_token, {
         httpOnly: true,
@@ -81,7 +93,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 export async function login(req: Request, res: Response, next: NextFunction) {
     const { identifier, password } = req.body;
 
-    const is_identifier_email = z.email().safeParse(identifier);
+    const is_identifier_email = z.email().safeParse(identifier).success;
 
 
     const user = is_identifier_email ? (
@@ -102,18 +114,19 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         });
         return;
     }
-    const is_password_valid = bcrypt.compare(user.passwordHash, password);
+    const is_password_valid = await bcrypt.compare(password, user.passwordHash);
 
     if (!is_password_valid) {
         logger.info("Invalid credentials!");
-        res.status(404).json({
+        res.status(401).json({
             msg: "Invalid Credentials!"
         });
+        return;
     }
 
     logger.info("User found, can log in");
 
-    const { access_token, refresh_token } = user_tokens(user.id.toString(), user.username);
+    const { access_token, refresh_token } = await user_tokens(user.id, user.username);
 
     res.cookie('refreshToken', refresh_token, {
         httpOnly: true,
