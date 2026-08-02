@@ -5,9 +5,20 @@
 // valid -> pass
 // expired -> deny
 
-
 import type { NextFunction, Request, Response } from "express";
 import logger from "../services/logger.js";
+import { AppError } from "./error_middleware.js";
+import jwt from "jsonwebtoken";
+import type { AccessTokenPayload } from "../types/types.js";
+import { ACCESS_SECRET } from "../controllers/authControllers.js";
+
+
+export function verifyAccessToken(token: string): AccessTokenPayload {
+    return jwt.verify(
+        token,
+        ACCESS_SECRET
+    ) as AccessTokenPayload;
+}
 
 export default async function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
@@ -15,12 +26,11 @@ export default async function authenticate(req: Request, res: Response, next: Ne
         const token = auth?.startsWith("Bearer ") ? auth.split(" ")[1] : undefined;
         
         if (!token) {
-            logger.error("No token found");
-            return;
+            throw new AppError(401, "Authentication Required!");
         }
         
         // verify token logic here
-
+        req.user = verifyAccessToken(token);
     } catch(err) {
         next(err);
     }
