@@ -14,7 +14,7 @@ model User {
   passwordHash  String         @map("password_hash")
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
-  documents     Document[]
+  notes         Note[]
   refreshTokens RefreshToken[]
 
   @@map("users")
@@ -32,36 +32,16 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-model Document {
+model Note {
   id        Int      @id @default(autoincrement())
   userId    Int      @map("user_id")
   title     String
+  content   String   @db.LongText
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  blocks    Block[]
-  user      User     @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "documents_user_id_fkey")
-  @@map("documents")
-}
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-model Block {
-  id         Int       @id @default(autoincrement())
-  documentId Int       @map("document_id")
-  type       BlockType
-  content    String    @db.LongText
-  position   Int
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId], map: "blocks_document_id_fkey")
-  @@map("blocks")
-}
-
-enum BlockType {
-  RICH_TEXT
-  MARKDOWN
-  WHITEBOARD
-  CODE
+  @@index([userId])
+  @@map("notes")
 }
