@@ -58,7 +58,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
         if (isExisting) {
             logger.error("User already exists");
             return res.status(409).json({
-                msg: "User already exists!",
+                msg: "Invalid Credentials!",
             });
         }
 
