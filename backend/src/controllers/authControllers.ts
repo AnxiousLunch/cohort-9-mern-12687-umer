@@ -20,6 +20,7 @@ function requireEnv(name: string): string {
 
 const ACCESS_SECRET = requireEnv("ACCESS_SECRET");
 const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
+const DUMMY_HASH="$2a$12$K.aDMwKUjZPfCU81fGFdkOi0G9xK.s.oJO4HsPF7xYUiZ92XbCh8i";
 
 
 const user_tokens = async (user_id: number, username: string) => {
@@ -119,19 +120,19 @@ export async function login(req: Request, res: Response, next: NextFunction) {
             : await prisma.user.findFirst({
                 where: { username: identifier },
             });
-
-        if (!user) {
-            logger.info("Invalid credentials");
-
-            return res.status(401).json({
-                msg: "Invalid Credentials!",
-            });
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-            password,
-            user.passwordHash
-        );
+            
+            if (!user) {
+                logger.info("Invalid credentials");
+                await bcrypt.compare(password, DUMMY_HASH);
+                return res.status(401).json({
+                    msg: "Invalid Credentials!",
+                });
+            }
+            
+            const isPasswordValid = await bcrypt.compare(
+                password,
+                user.passwordHash
+            );
 
         if (!isPasswordValid) {
             logger.info("Invalid credentials");
