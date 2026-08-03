@@ -9,18 +9,28 @@ each auth schema must adhere to
 /*The same min and max clamping is applied for login schemas as well.
 These are the only known inputs from the frontend for the time being */
 
+const passwordSchema = z
+    .string()
+    .min(8)
+    .refine(
+        (password) => Buffer.byteLength(password, "utf8") <= 72,
+        {
+            message: "Password must not exceed 72 UTF-8 bytes.",
+        }
+    );
+
 export const register_schema = z.object({
     body: z.object({
         username: z.string().min(3).max(100),
         email: z.email().min(3).max(100),
-        password: z.string().min(8).max(100)
+        password: passwordSchema
     })
 });
 
 export const login_schema = z.object({
     body: z.object({
         identifier: z.string().min(3).max(100),
-        password: z.string().min(8).max(100)
+        password: passwordSchema
     })
 });
 
