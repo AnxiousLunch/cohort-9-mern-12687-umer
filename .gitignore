@@ -23,10 +23,8 @@ build/
 coverage/
 .nyc_output/
 .vite/
-ed inside the project)
 backend/prisma/generated/
 .vscode/
-!.vscode/extensions.json
 .idea/
 .cache/
 .temp/

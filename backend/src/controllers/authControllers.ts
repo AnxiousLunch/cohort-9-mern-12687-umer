@@ -4,6 +4,7 @@ import type { NextFunction, Response, Request } from "express";
 import logger from "../services/logger.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Prisma } from "../../prisma/generated/prisma/client.js";
 import crypto from "node:crypto"
 import { z } from "zod";
 
@@ -44,38 +45,40 @@ const user_tokens = async (user_id: number, username: string) => {
 
     return { access_token, refresh_token }
 }
-
 export async function register(req: Request, res: Response, next: NextFunction) {
     try {
-
         const { username, email, password } = req.body;
 
         const isExisting = await prisma.user.findFirst({
-            where: { OR: [{ username }, { email }] }
+            where: {
+                OR: [{ username }, { email }],
+            },
         });
 
         if (isExisting) {
             logger.error("User already exists");
-            res.status(409).json({
-                "msg": "User already exists!"
+            return res.status(409).json({
+                msg: "User already exists!",
             });
-            return;
         }
-
 
         const user = await prisma.user.create({
             data: {
-                username, email,
-                passwordHash: await bcrypt.hash(password, 10)
-            }
+                username,
+                email,
+                passwordHash: await bcrypt.hash(password, 10),
+            },
         });
 
-        const { access_token, refresh_token } = await user_tokens(user.id, user.username);
+        const { access_token, refresh_token } = await user_tokens(
+            user.id,
+            user.username
+        );
 
-        res.cookie('refreshToken', refresh_token, {
+        res.cookie("refreshToken", refresh_token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -86,10 +89,20 @@ export async function register(req: Request, res: Response, next: NextFunction) 
             user: {
                 id: user.id,
                 username: user.username,
-                email: user.email
-            }
+                email: user.email,
+            },
         });
     } catch (err) {
+        if (
+            err instanceof Prisma.PrismaClientKnownRequestError &&
+            err.code === "P2002"
+        ) {
+            logger.error("User already exists");
+            return res.status(409).json({
+                msg: "User already exists!",
+            });
+        }
+
         next(err);
     }
 }
