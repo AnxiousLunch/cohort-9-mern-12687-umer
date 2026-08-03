@@ -1,0 +1,13 @@
+# Environment files
+**/.env
+**/.env.local
+
+# Dependencies
+**/node_modules
+
+# Build output
+**/dist
+**/build
+
+# Prisma generated client (if applicable)
+**/generated
