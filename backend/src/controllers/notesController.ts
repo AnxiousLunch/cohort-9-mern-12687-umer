@@ -1,6 +1,6 @@
 
 export async function createNote() {
-
+    
 }
 export async function getUserNotes() {
 
