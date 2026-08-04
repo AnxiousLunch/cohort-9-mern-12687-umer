@@ -7,8 +7,7 @@ import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import logger from "../services/logger.js";
 import jwt from "jsonwebtoken"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-
+import {Prisma} from "../../prisma/generated/prisma/client.js";
 
 export class AppError extends Error {
     public readonly statusCode: number;
@@ -55,7 +54,7 @@ export function errorHandler(
 
     // Prisma unique constraint
     if (
-        err instanceof PrismaClientKnownRequestError &&
+        err instanceof Prisma.PrismaClientKnownRequestError &&
         err.code === "P2002"
     ) {
         return res.status(409).json({
