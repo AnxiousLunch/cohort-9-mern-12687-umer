@@ -4,8 +4,7 @@ The application consists of four primary models:
 
 - **User** – User account information.
 - **RefreshToken** –  Store refresh tokens for each valid user session.
-- **Document** – Represents a note containing an ordered collection of blocks.
-- **Block** – Represents an individual content block within a document.
+- **Note** – Represents a note containing an ordered collection of blocks.
 
 ## Schema Definition
 
@@ -52,8 +51,6 @@ model Note {
 
 ## Relationships
 
-- A User can own many Documents.
+- A User can own many Notes.
 - A User can have many RefreshTokens.
-- A Document belongs to one User.
-- A Document contains many Blocks.
-- A Block belongs to one Document.
+- A Note belongs to one User.
