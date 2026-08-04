@@ -10,7 +10,7 @@
 import {z} from "zod";
 
 
-const idParam = z.object({
+export const idParam = z.object({
   id: z.coerce.number().int().positive(),
 });
 

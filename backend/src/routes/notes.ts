@@ -11,14 +11,16 @@ import { createNote,
   updateUserNote,
   deleteUserNote,
  } from '../controllers/notesController.js';
+import { validate } from '../middleware/zod_middleware.js';
+import { createNoteSchema, idParam, updateNoteSchema } from '../zod/note_schema.js';
 
 const router = Router();
 
 
-router.post('/', createNote);
-router.get('/', getUserNotes);
-router.get('/:id', getUserNoteById);
-router.put('/:id', updateUserNote);
-router.delete('/:id', deleteUserNote);
+router.post('/',        validate(createNoteSchema), createNote);
+router.get('/',                                     getUserNotes);
+router.get('/:id',      validate(idParam),          getUserNoteById);
+router.put('/:id',      validate(updateNoteSchema), updateUserNote);
+router.delete('/:id',   validate(idParam),          deleteUserNote);
 
 export default router;
