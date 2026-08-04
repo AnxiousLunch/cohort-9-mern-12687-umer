@@ -14,6 +14,10 @@ export const idParam = z.object({
   id: z.coerce.number().int().positive(),
 });
 
+export const noteIdParamSchema = z.object({
+  params: idParam,
+});
+
 export const createNoteSchema = z.object({
   body: z.object({
     title: z.string().trim().min(1).max(255),

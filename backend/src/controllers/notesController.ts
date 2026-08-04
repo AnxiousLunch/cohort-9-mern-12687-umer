@@ -96,7 +96,7 @@ export async function updateUserNote(req: Request, res: Response, next: NextFunc
             throw new AppError(404, "Note not found");
         }
 
-        await prisma.note.update({
+        const updatedNote = await prisma.note.update({
             where: {
                 id: Number(req.params.id),
             },
@@ -111,7 +111,7 @@ export async function updateUserNote(req: Request, res: Response, next: NextFunc
         res.json({
             success: true,
             message: "Note updated",
-            note,
+            note: updatedNote,
         });
     } catch (err) {
         next(err);
@@ -122,7 +122,7 @@ export async function deleteUserNote(req: Request, res: Response, next: NextFunc
     try {
         const userId = req.user!.userId;
         const noteId = Number(req.params.id);
-
+        logger.info(`User id is ${userId}, note id is ${noteId}`)
         const note = await prisma.note.findFirst({
             where: {
                 id: noteId,

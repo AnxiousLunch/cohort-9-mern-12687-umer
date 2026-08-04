@@ -12,7 +12,7 @@ import { createNote,
   deleteUserNote,
  } from '../controllers/notesController.js';
 import { validate } from '../middleware/zod_middleware.js';
-import { createNoteSchema, idParam, updateNoteSchema } from '../zod/note_schema.js';
+import { createNoteSchema, noteIdParamSchema, updateNoteSchema } from '../zod/note_schema.js';
 import authenticate from '../middleware/auth_middleware.js';
 
 const router = Router();
@@ -21,8 +21,8 @@ router.use(authenticate);
 
 router.post('/',        validate(createNoteSchema), createNote);
 router.get('/',                                     getUserNotes);
-router.get('/:id',      validate(idParam),          getUserNoteById);
+router.get('/:id',      validate(noteIdParamSchema),          getUserNoteById);
 router.put('/:id',      validate(updateNoteSchema), updateUserNote);
-router.delete('/:id',   validate(idParam),          deleteUserNote);
+router.delete('/:id',   validate(noteIdParamSchema),          deleteUserNote);
 
 export default router;

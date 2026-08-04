@@ -17,3 +17,49 @@ Content-Type: application/json
     "identifier": "umresafee@gmail.com",
     "password": "1234567890"
 }
+
+###
+
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYW54aW91c2x1bmNoISIsImlhdCI6MTc4NTg2MTAyMCwiZXhwIjoxNzg1OTQ3NDIwfQ.W_WF9i9WSzcMUMWomeaN1PCYFDprFTULHjHUt5fV5X8
+
+
+### Create a note
+POST {{baseUrl}}/api/notes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "My first note",
+    "content": "This is my first note."
+}
+
+###
+
+### Get all notes
+GET {{baseUrl}}/api/notes
+Authorization: Bearer {{token}}
+
+###
+
+### Get note by ID
+GET {{baseUrl}}/api/notes/1
+Authorization: Bearer {{token}}
+
+###
+
+### Update note
+PUT {{baseUrl}}/api/notes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "Updated title",
+    "content": "Updated note content."
+}
+
+###
+
+### Delete note
+DELETE {{baseUrl}}/api/notes/1
+Authorization: Bearer {{token}}
