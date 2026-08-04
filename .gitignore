@@ -11,3 +11,23 @@
 
 # Prisma generated client (if applicable)
 **/generated
+
+**/node_modules/*
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+dist/
+build/
+coverage/
+.nyc_output/
+.vite/
+backend/prisma/generated/
+.vscode/
+.idea/
+.cache/
+.temp/
+tmp/
+*.cache
+.eslintcache

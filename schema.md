@@ -1,49 +1,72 @@
-# Following contains the finalized schema
+# Database Schema
 
-- Users table for user information -> passwords, username, user_id, email
+The application consists of four primary models:
 
-- Refresh_Tokens to store refresh tokens -> id, token_hash
+- **User** – User account information.
+- **RefreshToken** –  Store refresh tokens for each valid user session.
+- **Document** – Represents a note containing an ordered collection of blocks.
+- **Block** – Represents an individual content block within a document.
 
-- Documents -> Represents a note, collection of blocks
+## Schema Definition
 
-- Blocks -> Represents different types of blocks a document can contain
+```prisma
+model User {
+  id            Int
+  username      String
+  email         String
+  passwordHash  String
+  createdAt     DateTime
+  updatedAt     DateTime
 
-## Formal Definition
-
-Formalizing each thing into a table can be 
-
-- User {
-    id, 
-    username, 
-    email, 
-    password_hash, 
-    created_at, 
-    updated_at
-
-} 
-- RefreshToken {
-    id, 
-    user_id, 
-    token_hash, 
-    expires_at, 
-    created_at
-
+  documents      Document[]
+  refreshTokens  RefreshToken[]
 }
 
-- Document {
-    id,
-    user_id, 
-    title, 
-    created_at, 
-    updated_at
+model RefreshToken {
+  id          Int
+  userId      Int
+  tokenHash   String
+  expiresAt   DateTime
+  createdAt   DateTime
+
+  user User
 }
 
-- Block {
-    id, 
-    document_id, 
-    type, 
-    content (Json), 
-    position, 
-    created_at, 
-    updated_at
-} 
+model Document {
+  id          Int
+  userId      Int
+  title       String
+  createdAt   DateTime
+  updatedAt   DateTime
+
+  user    User
+  blocks  Block[]
+}
+
+model Block {
+  id          Int
+  documentId  Int
+  type        BlockType
+  content     Json
+  position    Int
+  createdAt   DateTime
+  updatedAt   DateTime
+
+  document Document
+}
+
+enum BlockType {
+  RICH_TEXT
+  MARKDOWN
+  WHITEBOARD
+  CODE
+}
+```
+
+## Relationships
+
+- A User can own many Documents.
+- A User can have many RefreshTokens.
+- A Document belongs to one User.
+- A Document contains many Blocks.
+- A Block belongs to one Document.

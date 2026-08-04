@@ -3,7 +3,7 @@ import prisma from "../prisma/adapter.js";
 
 const port = 3000;
 
-async function start() {
+async function start(): Promise<void> {
     try {
         await prisma.$connect();
         console.log("Prisma initialized");
@@ -13,6 +13,7 @@ async function start() {
         });
     } catch (e) {
         console.error("Failed to connect:", e);
+        process.exit(1);
     }
 }
 
