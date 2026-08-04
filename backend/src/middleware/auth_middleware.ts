@@ -20,7 +20,7 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
     ) as AccessTokenPayload;
 }
 
-export default async function authenticate(req: Request, res: Response, next: NextFunction) {
+export default async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const auth = req.headers.authorization;
         const token = auth?.startsWith("Bearer ") ? auth.split(" ")[1] : undefined;

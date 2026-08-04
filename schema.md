@@ -4,7 +4,7 @@ The application consists of four primary models:
 
 - **User** – User account information.
 - **RefreshToken** –  Store refresh tokens for each valid user session.
-- **Note** – Represents a note containing an ordered collection of blocks.
+- **Notel** – Represents a note containing an ordered collection of blocks.
 
 ## Schema Definition
 
