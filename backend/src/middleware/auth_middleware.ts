@@ -31,6 +31,7 @@ export default async function authenticate(req: Request, res: Response, next: Ne
         
         // verify token logic here
         req.user = verifyAccessToken(token);
+        next();
     } catch(err) {
         next(err);
     }
