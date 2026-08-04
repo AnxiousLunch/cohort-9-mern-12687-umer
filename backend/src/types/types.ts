@@ -5,7 +5,7 @@ declare global {
     namespace Express {
         interface Request {
             user?: {
-                userId: string;
+                userId: Number;
                 username: string;
             };
         }
@@ -13,6 +13,6 @@ declare global {
 }
 
 export interface AccessTokenPayload extends JwtPayload {
-    userId: string;
+    userId: Number;
     username: string;
 }
