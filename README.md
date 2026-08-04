@@ -12,9 +12,9 @@ but would not make it within the current feature branch / scope.
 (Reason: Documents and other things have not been incorporated so
 within the current scope the working is good enough).
 
-- [x] Missing: Global Error handler to handle erros and exceptions
+- [x] Missing: Global Error handler to handle errors and exceptions
 gracefully as per project requirement.
-(Reason: try catch suffices for a more simplistici iteration. Need
+(Reason: try catch suffices for a more simplistic iteration. Need
 to make a choice in between returning the error or using exception
 pattern as oft seen with react type frameworks).
 
