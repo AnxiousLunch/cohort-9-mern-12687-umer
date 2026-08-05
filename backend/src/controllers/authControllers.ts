@@ -18,9 +18,9 @@ function requireEnv(name: string): string {
     return value;
 }
 
-const ACCESS_SECRET = requireEnv("ACCESS_SECRET");
-const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 const DUMMY_HASH="$2a$12$K.aDMwKUjZPfCU81fGFdkOi0G9xK.s.oJO4HsPF7xYUiZ92XbCh8i";
+export const ACCESS_SECRET = requireEnv("ACCESS_SECRET");
+export const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 
 
 const user_tokens = async (user_id: number, username: string) => {

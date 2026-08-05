@@ -4,6 +4,9 @@ import helmet from "helmet";
 import authRouter from "./routes/auth.js"
 import { pinoHttp } from "pino-http";
 import logger from "./services/logger.js"
+import { errorHandler } from "./middleware/error_middleware.js";
+import cookieParser from "cookie-parser";
+
 
 const app: Express = express();
 app.use(cors({
@@ -13,6 +16,7 @@ app.use(cors({
 
 app.use(helmet());
 app.use(express.json());
+app.use(cookieParser());
 app.use(pinoHttp({logger}))
 
 app.get("/health", (req: Request, res: Response) => {
@@ -20,6 +24,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use(errorHandler);
 
 export default app;
 
