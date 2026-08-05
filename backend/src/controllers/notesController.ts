@@ -3,9 +3,10 @@ import logger from "../services/logger.js";
 
 import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
+import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
 
 
-export async function createNote(req: Request, res: Response, next: NextFunction) {
+export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.userId;
         const { title, content = "" } = req.body;
@@ -80,7 +81,7 @@ export async function getUserNoteById(req: Request, res: Response, next: NextFun
     }
 }
 
-export async function updateUserNote(req: Request, res: Response, next: NextFunction) {
+export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.userId;
         const { title, content } = req.body;
@@ -95,6 +96,14 @@ export async function updateUserNote(req: Request, res: Response, next: NextFunc
         if (!note) {
             throw new AppError(404, "Note not found");
         }
+
+        if (title === undefined ) {
+            throw new AppError(401, "Title cannot be null");
+        }
+        if (content === undefined) {
+            throw new AppError(401, "content cannot be null")
+        }
+
 
         const updatedNote = await prisma.note.update({
             where: {

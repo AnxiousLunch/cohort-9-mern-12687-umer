@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
     "username": "anxiouslunch!",
-    "email": "umresafee@gmail.com",
+    "email": "exapmple@test.com",
     "password":"1234567890"
 }
 
@@ -14,15 +14,14 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-    "identifier": "umresafee@gmail.com",
+    "identifier": "exmaple@test.com",
     "password": "1234567890"
 }
 
 ###
 
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYW54aW91c2x1bmNoISIsImlhdCI6MTc4NTg2MTAyMCwiZXhwIjoxNzg1OTQ3NDIwfQ.W_WF9i9WSzcMUMWomeaN1PCYFDprFTULHjHUt5fV5X8
-
+@token =
 
 ### Create a note
 POST {{baseUrl}}/api/notes
@@ -43,13 +42,13 @@ Authorization: Bearer {{token}}
 ###
 
 ### Get note by ID
-GET {{baseUrl}}/api/notes/1
+GET {{baseUrl}}/api/notes/2
 Authorization: Bearer {{token}}
 
 ###
 
 ### Update note
-PUT {{baseUrl}}/api/notes/1
+PUT {{baseUrl}}/api/notes/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -61,5 +60,5 @@ Content-Type: application/json
 ###
 
 ### Delete note
-DELETE {{baseUrl}}/api/notes/1
+DELETE {{baseUrl}}/api/notes/2
 Authorization: Bearer {{token}}
