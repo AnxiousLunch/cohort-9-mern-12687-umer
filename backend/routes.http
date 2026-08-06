@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
     "username": "anxiouslunch!",
-    "email": "umresafee@gmail.com",
+    "email": "exapmple@test.com",
     "password":"1234567890"
 }
 
@@ -14,6 +14,51 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-    "identifier": "umresafee@gmail.com",
+    "identifier": "exmaple@test.com",
     "password": "1234567890"
 }
+
+###
+
+@baseUrl = http://localhost:3000
+@token =
+
+### Create a note
+POST {{baseUrl}}/api/notes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "My first note",
+    "content": "This is my first note."
+}
+
+###
+
+### Get all notes
+GET {{baseUrl}}/api/notes
+Authorization: Bearer {{token}}
+
+###
+
+### Get note by ID
+GET {{baseUrl}}/api/notes/2
+Authorization: Bearer {{token}}
+
+###
+
+### Update note
+PUT {{baseUrl}}/api/notes/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "Updated title",
+    "content": "Updated note content."
+}
+
+###
+
+### Delete note
+DELETE {{baseUrl}}/api/notes/2
+Authorization: Bearer {{token}}

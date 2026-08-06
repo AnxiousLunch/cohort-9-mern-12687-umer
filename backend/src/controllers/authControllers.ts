@@ -25,10 +25,10 @@ export const REFRESH_SECRET = requireEnv("REFRESH_SECRET");
 
 const user_tokens = async (user_id: number, username: string) => {
     const access_token = jwt.sign(
-        { user_id, username }, ACCESS_SECRET, { expiresIn: "1d" }
+        { userId: user_id, username }, ACCESS_SECRET, { expiresIn: "1d" }
     );
     const refresh_token = jwt.sign(
-        { user_id, username }, REFRESH_SECRET, { expiresIn: "7d" }
+        { userId: user_id, username }, REFRESH_SECRET, { expiresIn: "7d" }
     );
 
     const expiresAt = new Date();

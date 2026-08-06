@@ -6,7 +6,7 @@ import { pinoHttp } from "pino-http";
 import logger from "./services/logger.js"
 import { errorHandler } from "./middleware/error_middleware.js";
 import cookieParser from "cookie-parser";
-
+import notesRouter from "./routes/notes.js"
 
 const app: Express = express();
 app.use(cors({
@@ -24,6 +24,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/notes", notesRouter);
 app.use(errorHandler);
 
 export default app;
