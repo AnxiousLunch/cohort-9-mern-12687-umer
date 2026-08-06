@@ -240,7 +240,15 @@ describe("Auth API", () => {
 
             expect(res.status).to.equal(200);
             expect(res.body.success).to.be.true;
-            expect(res.headers["set-cookie"]).to.exist;
+
+            const cookies = res.headers["set-cookie"] as unknown as string[];
+
+            const refreshCookie = cookies.find(cookie =>
+                cookie.startsWith("refreshToken=")
+            );
+
+            expect(refreshCookie).to.exist;
+            expect(refreshCookie).to.match(/Max-Age=0|Expires=/);
         });
     });
 });
