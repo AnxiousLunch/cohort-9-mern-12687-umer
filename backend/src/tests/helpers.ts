@@ -1,4 +1,5 @@
 import { request } from "chai-http";
+import { Response } from "superagent";
 import prisma from "../../prisma/adapter.js";
 import app from "../app.js";
 
@@ -18,17 +19,31 @@ export interface TestUser {
     refreshCookie: string | undefined;
 }
 
-const createdUserIds: number[] = [];
-
-export async function registerRaw(payload: {
+export interface RegisterPayload {
     username: string;
     email: string;
     password: string;
-}) {
-    const res = await request.execute(app).post("/api/auth/register").send(payload);
+}
+
+export interface RegisterResponse {
+    user: {
+        id: number;
+        username: string;
+        email: string;
+    };
+    access_token: string;
+}
+
+const createdUserIds: number[] = [];
+
+export async function registerRaw(payload: RegisterPayload): Promise<Response> {
+    const res = await request.execute(app)
+        .post("/api/auth/register")
+        .send(payload);
 
     if (res.status === 201) {
-        createdUserIds.push(res.body.user.id);
+        const body = res.body as RegisterResponse;
+        createdUserIds.push(body.user.id);
     }
 
     return res;
@@ -47,12 +62,13 @@ export async function registerTestUser(prefix: string): Promise<TestUser> {
         );
     }
 
+    const body = res.body as RegisterResponse;
     return {
-        id: res.body.user.id,
+        id: body.user.id,
         username,
         email,
         password,
-        accessToken: res.body.access_token,
+        accessToken: body.access_token,
         refreshCookie: res.headers["set-cookie"]?.[0],
     };
 }
