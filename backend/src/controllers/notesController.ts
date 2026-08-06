@@ -97,14 +97,6 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
             throw new AppError(404, "Note not found");
         }
 
-        if (title === undefined ) {
-            throw new AppError(401, "Title cannot be null");
-        }
-        if (content === undefined) {
-            throw new AppError(401, "content cannot be null")
-        }
-
-
         const updatedNote = await prisma.note.update({
             where: {
                 id: Number(req.params.id),

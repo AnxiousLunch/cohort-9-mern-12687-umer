@@ -3,7 +3,7 @@
 import pino from "pino";
 
 const logger = pino({
-  level: 'info',
+  level: process.env.NODE_ENV === "test" ? "silent" : "info",
   redact: {
     paths: ['req.headers.cookie', 'req.headers.authorization', 'res.headers["set-cookie"]'],
     censor: '[Redacted]',

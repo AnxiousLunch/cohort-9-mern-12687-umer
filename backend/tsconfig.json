@@ -10,7 +10,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "esnext",
-    "types": ["node"],
+    "types": ["node", "mocha"],
     // For nodejs:
     "lib": ["esnext"],
     // "types": ["node"],

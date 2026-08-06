@@ -12,6 +12,6 @@ if (!databaseUrl) {
 }
 
 const adapter = new PrismaMariaDb(databaseUrl); 
-const prisma: PrismaClient = new PrismaClient({ adapter, log: ["query", "info", "warn", "error"], });
+const prisma: PrismaClient = new PrismaClient({ adapter, log: process.env.NODE_ENV === "test" ? ["warn", "error"] : ["query", "info", "warn", "error"], });
 
 export default prisma;   
