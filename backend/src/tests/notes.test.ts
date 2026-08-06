@@ -25,8 +25,11 @@ describe("Notes API", () => {
     });
 
     after(async () => {
+        try {
         await cleanupCreatedUsers();
+    } finally {
         await prisma.$disconnect();
+    }
     });
 
     async function createNote(body: Record<string, unknown> = { title: "Test note", content: "Test content" }) {

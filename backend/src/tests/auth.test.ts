@@ -30,8 +30,11 @@ describe("Auth API", () => {
     });
 
     after(async () => {
+       try {
         await cleanupCreatedUsers();
+    } finally {
         await prisma.$disconnect();
+    }
     });
 
     describe("POST /api/auth/register", () => {
