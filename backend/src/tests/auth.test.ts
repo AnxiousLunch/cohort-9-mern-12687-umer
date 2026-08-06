@@ -241,7 +241,9 @@ describe("Auth API", () => {
             expect(res.status).to.equal(200);
             expect(res.body.success).to.be.true;
 
-            const cookies = res.headers["set-cookie"] as unknown as string[];
+            const cookies = Array.isArray(res.headers["set-cookie"])
+                ? res.headers["set-cookie"]
+                : [res.headers["set-cookie"]];
 
             const refreshCookie = cookies.find(cookie =>
                 cookie.startsWith("refreshToken=")
