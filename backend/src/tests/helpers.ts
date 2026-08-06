@@ -75,9 +75,9 @@ export async function registerTestUser(prefix: string): Promise<TestUser> {
 
 export async function cleanupCreatedUsers(): Promise<void> {
     for (const id of createdUserIds) {
-        await prisma.refreshToken.deleteMany({ where: { userId: id } }).catch(() => {});
-        await prisma.note.deleteMany({ where: { userId: id } }).catch(() => {});
-        await prisma.user.delete({ where: { id } }).catch(() => {});
+        await prisma.refreshToken.deleteMany({ where: { userId: id } });
+        await prisma.note.deleteMany({ where: { userId: id } });
+        await prisma.user.delete({ where: { id } });
     }
     createdUserIds.length = 0;
 }
