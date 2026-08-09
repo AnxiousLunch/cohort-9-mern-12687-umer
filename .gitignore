@@ -1,33 +1,28 @@
 # Environment files
-**/.env
-**/.env.local
-
-# Dependencies
-**/node_modules
-
-# Build output
-**/dist
-**/build
-
-# Prisma generated client (if applicable)
-**/generated
-
-**/node_modules/*
 .env
 .env.*
 !.env.example
-backend/.env
-frontend/.env
+
+# Dependencies
+node_modules/
+
+# Build output
 dist/
 build/
+
+# Prisma generated files
+**/prisma/generated/
+
+# Coverage / tooling
 coverage/
 .nyc_output/
 .vite/
-backend/prisma/generated/
-.vscode/
-.idea/
 .cache/
 .temp/
 tmp/
 *.cache
 .eslintcache
+
+# IDE
+.vscode/
+.idea/
