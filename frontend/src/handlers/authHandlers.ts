@@ -1,10 +1,12 @@
 import api from "../api/axios";
+import type { AuthResponse } from "../types/auth";
+
 
 export const handleUserSignup = async (
   username: string,
   email: string,
   password: string
-) => {
+): Promise<AuthResponse> => {
   const response = await api.post("/auth/register", {
     username,
     email,
@@ -21,7 +23,7 @@ export const handleUserSignup = async (
 export const handleUserLogin = async (
   identifier: string,
   password: string
-) => {
+): Promise<AuthResponse> => {
   const response = await api.post("/auth/login", {
     identifier,
     password,
