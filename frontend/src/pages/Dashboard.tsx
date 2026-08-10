@@ -89,24 +89,38 @@ function Dashboard(): ReactElement {
         </div>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 overflow-y-auto">
         {selectedNote ? (
-          <div>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="title"
-            />
+          <div className="mx-auto max-w-4xl p-8">
+            <div className="px-6 py-4">
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="title"
+                className="border-none bg-transparent text-3xl font-semibold outline-none"
+              />
+            </div>
 
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={20}
               placeholder="content"
-              className="w-full"
+              className="w-full border-none bg-transparent border-gray-900 py-2 text-base resize-none"
             /> 
-            <button onClick={handleSave}>Save</button>
-            <button onClick={handleDelete}>Delete</button>
+
+            <div className="flex items-center justify-between py-3">
+
+              <button onClick={handleSave}
+                className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800">
+                  Save
+              </button>
+              
+              <button onClick={handleDelete}
+                className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50">
+                  Delete
+              </button>
+            </div>
           </div>
         ) : (
           <div> Nothing Selected </div>
