@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 export default function LoginPage(): ReactElement {
   const { login, isLoading } = useAuth();
@@ -21,12 +22,17 @@ export default function LoginPage(): ReactElement {
     try {
       await login(identifier, password);
       navigate(from, { replace: true });
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.msg ?? "Something went wrong. Please try again."
-      );
-    }
-  };
+    } 
+    catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.msg || "Login failed");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
+    };
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
