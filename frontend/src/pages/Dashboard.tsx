@@ -6,10 +6,11 @@ import {
   updateNote,
 } from "../handlers/noteHandlers";
 import { useAuth } from "../context/AuthContext";
+import {type Note } from "../types/notes";
 
 function Dashboard(): ReactElement {
-  const [notes, setNotes] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const { logout } = useAuth();
 
   const [title, setTitle] = useState("");
@@ -31,10 +32,12 @@ function Dashboard(): ReactElement {
   };
 
   const handleDelete = async () => {
-    await deleteNote(selectedNote.id);
-    const rest = notes.filter((note) => note.id !== selectedNote.id);
-    setNotes(rest);
-    setSelectedId(rest[0].id || null);
+    if (selectedNote) {
+      await deleteNote(selectedNote.id);
+      const rest = notes.filter((note) => note.id !== selectedNote.id);
+      setNotes(rest);
+      setSelectedId(rest[0].id || null);
+    }
   };
 
   const handleCreate = async () => {
@@ -44,17 +47,19 @@ function Dashboard(): ReactElement {
   };
 
   const handleSave = async () => {
-    const updatedNote = await updateNote(selectedNote.id, title, content);
-
-    setNotes((currentNotes) => {
-      return currentNotes.map((note) => {
-        if (note.id === selectedNote.id) {
-          return updatedNote;
-        }
-
-        return note;
+    if (selectedNote) {
+      const updatedNote = await updateNote(selectedNote.id, title, content);
+  
+      setNotes((currentNotes) => {
+        return currentNotes.map((note) => {
+          if (note.id === selectedNote.id) {
+            return updatedNote;
+          }
+  
+          return note;
+        });
       });
-    });
+    }
   };
 
   const selectedNote = notes.find((note) => note.id === selectedId);
