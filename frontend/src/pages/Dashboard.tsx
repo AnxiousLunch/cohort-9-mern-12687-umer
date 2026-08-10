@@ -23,10 +23,11 @@ function Dashboard(): ReactElement {
   return (
     <>
       <div style={{ display: "flex", height: "100vh" }}> 
+        <div className="w-[200px] border-1 p-10">
         <button onClick={handleLogout}>
           Logout
         </button>
-          <div className="w-[200px] border-1 p-10">
+          <div>
               {notes.map((note) => (
                 <button
                   key={note.id}
@@ -35,6 +36,8 @@ function Dashboard(): ReactElement {
                 </button>
               ))}
             </div>
+
+        </div>
 
       </div>
     </>
