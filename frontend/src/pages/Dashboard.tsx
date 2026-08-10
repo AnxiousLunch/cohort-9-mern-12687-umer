@@ -57,14 +57,16 @@ function Dashboard(): ReactElement {
   const selectedNote = notes.find((note) => note.id === selectedId);
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}> 
-      <div className="w-[200px] border-1 p-10">
-        <button onClick={handleCreate}>
-          Create Note
-        </button>
-        <button onClick={handleLogout}>
-          Logout
-        </button>
+    <div className="flex h-screen bg-gray-50 text-gray-900"> 
+      <div className="flex  flex-col bg-white w-50 border-r border-gray-200 p-10">
+        <div>
+          <button onClick={handleCreate}>
+            Create Note
+          </button>
+          <button onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
         <div>
           {notes.map((note) => (
             <button
