@@ -17,16 +17,17 @@ function Dashboard(): ReactElement {
 
   return (
     <>
-      <div style={{ display: "flex", height: "100vh" }}>
-        <div>
-            {notes.map((note) => (
-              <button
-                key={note.id}
-              >
-                {note.title || "Untitled"}
-              </button>
-            ))}
-          </div>
+      <div style={{ display: "flex", height: "100vh" }}> 
+
+          <div className="w-[200px] border-1 p-10">
+              {notes.map((note) => (
+                <button
+                  key={note.id}
+                >
+                  {note.title || "Untitled"}
+                </button>
+              ))}
+            </div>
 
       </div>
     </>
