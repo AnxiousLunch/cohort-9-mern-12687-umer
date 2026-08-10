@@ -1,10 +1,11 @@
 import { useEffect, useState, type ReactElement } from "react"
-import { getNotes } from "../handlers/noteHandlers";
+import { deleteNote, getNotes } from "../handlers/noteHandlers";
 import { useAuth } from "../context/AuthContext";
 
 
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
   const {logout} = useAuth();
 
   useEffect(() => {
@@ -18,6 +19,13 @@ function Dashboard(): ReactElement {
 
   const handleLogout = async () => {
     await logout();
+  }
+
+  const handleDelete = async (id) => {
+    await deleteNote(id);
+    const rest = notes.filter((note) => note.id !== id);
+    setNotes(rest);
+    setSelectedId(rest[0].id || null);
   }
 
   return (
