@@ -8,6 +8,9 @@ function Dashboard(): ReactElement {
   const [selectedId, setSelectedId] = useState(null);
   const {logout} = useAuth();
 
+  const [tite, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
   useEffect(() => {
     async function fetchNotes() {
       const fetchedNotes = await getNotes();
@@ -51,27 +54,29 @@ function Dashboard(): ReactElement {
     });
   }
 
+  const selectedNote = notes.find((note) => note.id === selectedId);
+
   return (
-    <>
-      <div style={{ display: "flex", height: "100vh" }}> 
-        <div className="w-[200px] border-1 p-10">
+    <div style={{ display: "flex", height: "100vh" }}> 
+      <div className="w-[200px] border-1 p-10">
         <button onClick={handleLogout}>
           Logout
         </button>
-          <div>
-              {notes.map((note) => (
-                <button
-                  key={note.id}
-                >
-                  {note.title || "Untitled"}
-                </button>
-              ))}
-            </div>
-
+        <div>
+          {notes.map((note) => (
+            <button
+              key={note.id}
+            >
+              {note.title || "Untitled"}
+            </button>
+          ))}
         </div>
-
       </div>
-    </>
+
+      <div className="flex p-4">
+          <div>No note selected</div>
+      </div>
+    </div>
   )
 }
 
