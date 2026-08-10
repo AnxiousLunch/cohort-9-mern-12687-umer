@@ -1,6 +1,7 @@
   import { useState, type FormEvent, type ReactElement } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 export default function SignupPage(): ReactElement {
   const { signup, isLoading } = useAuth();
@@ -18,14 +19,17 @@ export default function SignupPage(): ReactElement {
     try {
       await signup(username, email, password);
       navigate("/dashboard", { replace: true });
-    } catch (err: any) {
-      const zodIssue = err?.response?.data?.error?.issues?.[0]?.message;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const message =
+          err.response?.data?.error?.issues?.[0]?.message ??
+          err.response?.data?.msg ??
+          "Something went wrong. Please try again.";
 
-      setError(
-        zodIssue ??
-          err?.response?.data?.msg ??
-          "Something went wrong. Please try again."
-      );
+        setError(message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 

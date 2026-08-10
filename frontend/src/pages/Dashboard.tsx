@@ -6,7 +6,8 @@ import {
   updateNote,
 } from "../handlers/noteHandlers";
 import { useAuth } from "../context/AuthContext";
-import {type Note } from "../types/notes";
+import { type Note } from "../types/notes";
+import axios from "axios";
 
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -15,50 +16,101 @@ function Dashboard(): ReactElement {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchNotes() {
-      const fetchedNotes = await getNotes();
-      setNotes(fetchedNotes);
-      if (fetchedNotes.length > 0) {
-        setSelectedId(fetchedNotes[0].id);
+      try {
+        const fetchedNotes = await getNotes();
+        setNotes(fetchedNotes);
+        if (fetchedNotes.length > 0) {
+          setSelectedId(fetchedNotes[0].id);
+        }
+      } catch (err: any) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.msg || "Login failed");
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong");
+        }
       }
     }
     fetchNotes();
   }, []);
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.msg || "Login failed");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
+    }
   };
 
   const handleDelete = async () => {
-    if (selectedNote) {
-      await deleteNote(selectedNote.id);
-      const rest = notes.filter((note) => note.id !== selectedNote.id);
-      setNotes(rest);
-      setSelectedId(rest[0].id || null);
+    try {
+      if (selectedNote) {
+        await deleteNote(selectedNote.id);
+        const rest = notes.filter((note) => note.id !== selectedNote.id);
+        setNotes(rest);
+        setSelectedId(rest[0].id || null);
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.msg || "Login failed");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
   const handleCreate = async () => {
-    const createdNote = await createNote("Untitled Noted");
-    setNotes([createdNote, ...notes]);
-    setSelectedId(createdNote.id);
+    try {
+      const createdNote = await createNote("Untitled Noted");
+      setNotes([createdNote, ...notes]);
+      setSelectedId(createdNote.id);
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.msg || "Login failed");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
+    }
   };
 
   const handleSave = async () => {
-    if (selectedNote) {
-      const updatedNote = await updateNote(selectedNote.id, title, content);
-  
-      setNotes((currentNotes) => {
-        return currentNotes.map((note) => {
-          if (note.id === selectedNote.id) {
-            return updatedNote;
-          }
-  
-          return note;
+    try {
+      if (selectedNote) {
+        const updatedNote = await updateNote(selectedNote.id, title, content);
+
+        setNotes((currentNotes) => {
+          return currentNotes.map((note) => {
+            if (note.id === selectedNote.id) {
+              return updatedNote;
+            }
+
+            return note;
+          });
         });
-      });
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.msg || "Login failed");
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
@@ -89,8 +141,11 @@ function Dashboard(): ReactElement {
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {notes.map((note) => (
-            <button key={note.id} onClick={() => setSelectedId(note.id)}
-            className="px-2 py-2 w-full rounded-md text-sm">
+            <button
+              key={note.id}
+              onClick={() => setSelectedId(note.id)}
+              className="px-2 py-2 w-full rounded-md text-sm"
+            >
               {note.title || "Untitled"}
             </button>
           ))}
