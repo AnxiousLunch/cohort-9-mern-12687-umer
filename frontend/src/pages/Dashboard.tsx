@@ -8,7 +8,7 @@ function Dashboard(): ReactElement {
   const [selectedId, setSelectedId] = useState(null);
   const {logout} = useAuth();
 
-  const [tite, setTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   useEffect(() => {
@@ -27,9 +27,9 @@ function Dashboard(): ReactElement {
     await logout();
   }
 
-  const handleDelete = async (id) => {
-    await deleteNote(id);
-    const rest = notes.filter((note) => note.id !== id);
+  const handleDelete = async () => {
+    await deleteNote(selectedNote.id);
+    const rest = notes.filter((note) => note.id !== selectedNote.id);
     setNotes(rest);
     setSelectedId(rest[0].id || null);
   }
@@ -59,6 +59,9 @@ function Dashboard(): ReactElement {
   return (
     <div style={{ display: "flex", height: "100vh" }}> 
       <div className="w-[200px] border-1 p-10">
+        <button onClick={handleCreate}>
+          Create Note
+        </button>
         <button onClick={handleLogout}>
           Logout
         </button>
@@ -66,6 +69,7 @@ function Dashboard(): ReactElement {
           {notes.map((note) => (
             <button
               key={note.id}
+              onClick={()  => setSelectedId(note.id)}
             >
               {note.title || "Untitled"}
             </button>
@@ -73,8 +77,28 @@ function Dashboard(): ReactElement {
         </div>
       </div>
 
-      <div className="flex p-4">
-          <div>No note selected</div>
+      <div className="flex-1 p-4">
+        {selectedNote ? (
+          <div>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="title"
+            />
+
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={20}
+              placeholder="content"
+              className="w-full"
+            /> 
+            <button onClick={handleSave}>Save</button>
+            <button onClick={handleDelete}>Delete</button>
+          </div>
+        ) : (
+          <div> Nothing Selected </div>
+        )}
       </div>
     </div>
   )
