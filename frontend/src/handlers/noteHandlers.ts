@@ -1,13 +1,23 @@
 import api from "../api/axios";
 import type { Note } from "../types/notes";
 
+
+type NotesListResponse = {
+  notes: Note[];
+};
+
+type NoteMutationResponse = {
+  note: Note;
+};
+
+
 export const getNotes = async (): Promise<Note[]> => {
-  const response = await api.get("/notes");
+  const response = await api.get<NotesListResponse>("/notes");
   return response.data.notes;
 };
 
 export const getNote = async (id: number): Promise<Note> => {
-  const response = await api.get(`/notes/${id}`);
+  const response = await api.get<NoteMutationResponse>(`/notes/${id}`);
   return response.data.note;
 };
 
@@ -15,7 +25,7 @@ export const createNote = async (
   title: string,
   content = ""
 ): Promise<Note> => {
-  const response = await api.post("/notes", { title, content });
+  const response = await api.post<NoteMutationResponse>("/notes", { title, content });
   return response.data.note;
 };
 
@@ -24,7 +34,7 @@ export const updateNote = async (
   title: string,
   content: string
 ): Promise<Note> => {
-  const response = await api.put(`/notes/${id}`, { title, content });
+  const response = await api.put<NoteMutationResponse>(`/notes/${id}`, { title, content });
   return response.data.note;
 };
 
