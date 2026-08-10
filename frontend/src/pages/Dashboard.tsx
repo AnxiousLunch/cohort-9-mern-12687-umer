@@ -59,7 +59,7 @@ function Dashboard(): ReactElement {
         await deleteNote(selectedNote.id);
         const rest = notes.filter((note) => note.id !== selectedNote.id);
         setNotes(rest);
-        setSelectedId(rest[0].id || null);
+        setSelectedId(rest[0].id ?? null);
       }
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
@@ -75,7 +75,7 @@ function Dashboard(): ReactElement {
   const handleCreate = async () => {
     try {
       const createdNote = await createNote("Untitled Noted");
-      setNotes([createdNote, ...notes]);
+      setNotes((currentNotes) => [createdNote, ...currentNotes]);
       setSelectedId(createdNote.id);
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
