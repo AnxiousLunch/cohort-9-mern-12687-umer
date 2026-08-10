@@ -126,8 +126,23 @@ function Dashboard(): ReactElement {
     }
   }, [selectedNote]);
 
+  useEffect(() => {
+    if (!error) return;
+
+    const timer = setTimeout(() => {
+      setError(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [error]);
+
   return (
     <div className="flex h-screen bg-gray-50 text-gray-900">
+        {error && (
+          <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white"> 
+            {error}
+          </div>
+        )}
       <div className="flex  flex-col bg-white w-50 border-r border-gray-200">
         <div className="flex flex-col items-center px-4 py-6 justify-between border-b border-gray-200">
           <h1 className="text-lg font-semibold">Notes</h1>
