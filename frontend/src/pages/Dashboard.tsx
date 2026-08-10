@@ -1,12 +1,16 @@
-import { useEffect, useState, type ReactElement } from "react"
-import { createNote, deleteNote, getNotes, updateNote } from "../handlers/noteHandlers";
+import { useEffect, useState, type ReactElement } from "react";
+import {
+  createNote,
+  deleteNote,
+  getNotes,
+  updateNote,
+} from "../handlers/noteHandlers";
 import { useAuth } from "../context/AuthContext";
-
 
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  const {logout} = useAuth();
+  const { logout } = useAuth();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -15,33 +19,32 @@ function Dashboard(): ReactElement {
     async function fetchNotes() {
       const fetchedNotes = await getNotes();
       setNotes(fetchedNotes);
-       if (fetchedNotes.length > 0) {
+      if (fetchedNotes.length > 0) {
         setSelectedId(fetchedNotes[0].id);
       }
-
     }
     fetchNotes();
   }, []);
 
   const handleLogout = async () => {
     await logout();
-  }
+  };
 
   const handleDelete = async () => {
     await deleteNote(selectedNote.id);
     const rest = notes.filter((note) => note.id !== selectedNote.id);
     setNotes(rest);
     setSelectedId(rest[0].id || null);
-  }
+  };
 
   const handleCreate = async () => {
     const createdNote = await createNote("Untitled Noted");
     setNotes([createdNote, ...notes]);
     setSelectedId(createdNote.id);
-  }
+  };
 
-  const handleSave = async() => {
-    const updatedNote = await updateNote(selectedNote.id, title,content);
+  const handleSave = async () => {
+    const updatedNote = await updateNote(selectedNote.id, title, content);
 
     setNotes((currentNotes) => {
       return currentNotes.map((note) => {
@@ -52,38 +55,47 @@ function Dashboard(): ReactElement {
         return note;
       });
     });
-  }
+  };
 
   const selectedNote = notes.find((note) => note.id === selectedId);
 
+  useEffect(() => {
+    if (selectedNote) {
+      setTitle(selectedNote.title || "");
+      setContent(selectedNote.content || "");
+    } else {
+      setTitle("");
+      setContent("");
+    }
+  }, [selectedNote]);
+
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-900"> 
-
-
-      <div className="flex  flex-col bg-white w-50 border-r border-gray-200 p-10">
-
+    <div className="flex h-screen bg-gray-50 text-gray-900">
+      <div className="flex  flex-col bg-white w-50 border-r border-gray-200">
         <div className="flex flex-col items-center px-4 py-6 justify-between border-b border-gray-200">
           <h1 className="text-lg font-semibold">Notes</h1>
-          <button onClick={handleCreate}
-          className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50">
+          <button
+            onClick={handleCreate}
+            className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+          >
             Create Note
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3 space-y-5">
+        <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {notes.map((note) => (
-            <button
-              key={note.id}
-              onClick={()  => setSelectedId(note.id)}
-            >
+            <button key={note.id} onClick={() => setSelectedId(note.id)}
+            className="px-2 py-2 w-full rounded-md text-sm">
               {note.title || "Untitled"}
             </button>
           ))}
         </div>
 
         <div className="flex items-center p-4 justify-between border-b border-gray-200">
-          <button onClick={handleLogout}
-          className="rounder border border-gray-300 bg-white p-4 text-black hover:bg-gray-50">
+          <button
+            onClick={handleLogout}
+            className="rounder border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+          >
             Logout
           </button>
         </div>
@@ -107,18 +119,21 @@ function Dashboard(): ReactElement {
               rows={20}
               placeholder="content"
               className="w-full border-none bg-transparent border-gray-900 py-2 text-base resize-none"
-            /> 
+            />
 
             <div className="flex items-center justify-between py-3">
-
-              <button onClick={handleSave}
-                className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800">
-                  Save
+              <button
+                onClick={handleSave}
+                className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Save
               </button>
-              
-              <button onClick={handleDelete}
-                className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50">
-                  Delete
+
+              <button
+                onClick={handleDelete}
+                className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+              >
+                Delete
               </button>
             </div>
           </div>
@@ -127,7 +142,7 @@ function Dashboard(): ReactElement {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default Dashboard;
