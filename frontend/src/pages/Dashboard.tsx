@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement } from "react"
-import { deleteNote, getNotes } from "../handlers/noteHandlers";
+import { createNote, deleteNote, getNotes, updateNote } from "../handlers/noteHandlers";
 import { useAuth } from "../context/AuthContext";
 
 
@@ -10,8 +10,11 @@ function Dashboard(): ReactElement {
 
   useEffect(() => {
     async function fetchNotes() {
-      const notes = await getNotes();
-      setNotes(notes);
+      const fetchedNotes = await getNotes();
+      setNotes(fetchedNotes);
+       if (fetchedNotes.length > 0) {
+        setSelectedId(fetchedNotes[0].id);
+      }
 
     }
     fetchNotes();
@@ -26,6 +29,26 @@ function Dashboard(): ReactElement {
     const rest = notes.filter((note) => note.id !== id);
     setNotes(rest);
     setSelectedId(rest[0].id || null);
+  }
+
+  const handleCreate = async () => {
+    const createdNote = await createNote("Untitled Noted");
+    setNotes([createdNote, ...notes]);
+    setSelectedId(createdNote.id);
+  }
+
+  const handleSave = async() => {
+    const updatedNote = await updateNote(selectedNote.id, title,content);
+
+    setNotes((currentNotes) => {
+      return currentNotes.map((note) => {
+        if (note.id === selectedNote.id) {
+          return updatedNote;
+        }
+
+        return note;
+      });
+    });
   }
 
   return (
