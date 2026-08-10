@@ -1,10 +1,34 @@
-import type { ReactElement } from "react"
+import { useEffect, useState, type ReactElement } from "react"
+import { getNotes } from "../handlers/noteHandlers";
 
 
 function Dashboard(): ReactElement {
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    async function fetchNotes() {
+      const notes = await getNotes();
+      setNotes(notes);
+
+    }
+    fetchNotes();
+  }, []);
+
+
   return (
     <>
-      <h1 className="text-2xl">Hello</h1>
+      <div style={{ display: "flex", height: "100vh" }}>
+        <div>
+            {notes.map((note) => (
+              <button
+                key={note.id}
+              >
+                {note.title || "Untitled"}
+              </button>
+            ))}
+          </div>
+
+      </div>
     </>
   )
 }
