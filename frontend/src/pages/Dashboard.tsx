@@ -18,6 +18,8 @@ function Dashboard(): ReactElement {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   useEffect(() => {
     async function fetchNotes() {
       try {
@@ -143,15 +145,44 @@ function Dashboard(): ReactElement {
             {error}
           </div>
         )}
-      <div className="flex  flex-col bg-white w-50 border-r border-gray-200">
+        
+      <div className={`flex flex-col bg-white w-50 border-r border-gray-200 h-full ${isSidebarCollapsed ? "w-64" : "w-20"}`}>
+
         <div className="flex flex-col items-center px-4 py-6 justify-between border-b border-gray-200">
-          <h1 className="text-lg font-semibold">Notes</h1>
-          <button
-            onClick={handleCreate}
-            className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
-          >
-            Create Note
-          </button>
+          <img src={"src/assets/logo.png"} alt="Notes logo" className="h-10 w-10 shrink-0 object-contain" />
+
+        {
+          !isSidebarCollapsed && (
+            <div> 
+              <h1 className="text-lg font-semibold">Notes</h1>
+              <button
+                onClick={() => setIsSidebarCollapsed(true)}
+              >
+                ←
+              </button>
+            </div>
+
+          )
+        }
+        {
+          isSidebarCollapsed && (
+            <div> 
+              <h1 className="text-lg font-semibold">Notes</h1>
+              <button
+                onClick={() => setIsSidebarCollapsed(false)}
+              >
+                →
+              </button>
+            </div>
+
+          )
+        }
+              <button
+                onClick={handleCreate}
+                className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+                >
+                Create Note
+              </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
