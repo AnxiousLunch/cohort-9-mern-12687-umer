@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import LoginPage from './LoginPage';
+import LoginPage from '../pages/LoginPage';
 import { useAuth } from '../context/AuthContext';
 
 vi.mock("../context/AuthContext", () => ({
@@ -35,7 +35,7 @@ describe("LoginPage", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockAuth.mockReturnValue({
-            login: vi.fn().mockResolveValue(undefined),
+            login: vi.fn().mockResolvedValue(undefined),
             isLoading: false,
         } as ReturnType<typeof useAuth>);
 
