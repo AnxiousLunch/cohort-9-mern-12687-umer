@@ -5,6 +5,13 @@ import { MemoryRouter } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import { useAuth } from '../context/AuthContext';
 
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+afterEach(() => {
+  cleanup();
+});
+
 vi.mock("../context/AuthContext", () => ({
     useAuth: vi.fn(),
 }));
@@ -85,11 +92,11 @@ describe("LoginPage", () => {
 
         await user.type(
         screen.getByPlaceholderText('Username or email'),
-        'umer'
+        'umer.safee'
         );
         await user.type(
         screen.getByPlaceholderText('Password'),
-        'password123'
+        '1234567890'
         );
         await user.click(screen.getByRole('button', { name: 'Log in' }));
 
@@ -122,7 +129,7 @@ describe("LoginPage", () => {
 
     // check for invalid users, empty users, invalid type input -> checked with dispaly error message
     // check navigate to dashboard on successfull login
-    it('navigates to "/" on successful login', async () => {
+    it('navigates to dashboard on successful login', async () => {
         const user = userEvent.setup();
         const loginMock = vi.fn().mockResolvedValue(undefined);
         mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
@@ -136,7 +143,9 @@ describe("LoginPage", () => {
         await user.click(screen.getByRole('button', { name: 'Log in' }));
 
         await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/');
+        expect(mockNavigate).toHaveBeenCalledWith('/dashboard', {
+            replace: true
+        });
         });
     });
     // Invalid password checks -> already checked with display error message
