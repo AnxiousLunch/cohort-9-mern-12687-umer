@@ -59,7 +59,7 @@ function Dashboard(): ReactElement {
         await deleteNote(selectedNote.id);
         const rest = notes.filter((note) => note.id !== selectedNote.id);
         setNotes(rest);
-        setSelectedId(rest[0].id ?? null);
+        setSelectedId(rest[0]?.id ?? null);
       }
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
@@ -114,7 +114,7 @@ function Dashboard(): ReactElement {
     }
   };
 
-  const selectedNote = notes.find((note) => note.id === selectedId);
+  const selectedNote = notes.find((note) => note.id === selectedId) ;
 
   useEffect(() => {
     if (selectedNote) {
