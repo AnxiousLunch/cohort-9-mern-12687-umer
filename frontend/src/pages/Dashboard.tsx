@@ -173,7 +173,7 @@ function Dashboard(): ReactElement {
           <button
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           className="rounded-md px-2 py-1 text-gray-500 hover:bg-gray-100">
-            {isSidebarCollapsed ? "-->" : "<--"}
+            {isSidebarCollapsed ? "→" : "←"}
           </button>
         </div>
 
@@ -209,7 +209,7 @@ function Dashboard(): ReactElement {
         </div>
       </div>
 
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="min-w-0 flex-1 p-4 overflow-y-auto">
         {selectedNote ? (
           <div className="mx-auto max-w-4xl p-8">
             <div className="px-6 py-4">
