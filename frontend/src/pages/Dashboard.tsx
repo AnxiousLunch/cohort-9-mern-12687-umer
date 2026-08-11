@@ -116,7 +116,7 @@ function Dashboard(): ReactElement {
     }
   };
 
-  const selectedNote = notes.find((note) => note.id === selectedId) ;
+  const selectedNote = notes.find((note) => note.id === selectedId);
 
   useEffect(() => {
     if (selectedNote) {
@@ -139,50 +139,44 @@ function Dashboard(): ReactElement {
   }, [error]);
 
   return (
+    // Main container
     <div className="flex h-screen bg-gray-50 text-gray-900">
-        {error && (
-          <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white"> 
-            {error}
-          </div>
-        )}
-        
-      <div className={`flex flex-col bg-white w-50 border-r border-gray-200 h-full transition-all duration-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}>
+      {error && (
+        <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white">
+          {error}
+        </div>
+      )}
 
+      {/* {sidebar continer} */}
+      <div
+        className={`flex flex-col bg-white w-50 border-r border-gray-200 h-full transition-all duration-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}
+      >
+        {/* sidebar header */}
         <div className="flex flex-col items-center px-4 py-6 justify-between border-b border-gray-200">
-          <img src={"src/assets/logo.png"} alt="Notes logo" className="h-10 w-10 shrink-0 object-contain" />
+          <img
+            src={"src/assets/logo.png"}
+            alt="Notes logo"
+            className="h-10 w-10 shrink-0 object-contain"
+          />
 
-        {
-          !isSidebarCollapsed && (
-            <div> 
+          {!isSidebarCollapsed && (
+            <div>
               <h1 className="text-lg font-semibold">Notes</h1>
-              <button
-                onClick={() => setIsSidebarCollapsed(true)}
-              >
-                ←
-              </button>
+              <button onClick={() => setIsSidebarCollapsed(true)}>←</button>
             </div>
-
-          )
-        }
-        {
-          isSidebarCollapsed && (
-            <div> 
+          )}
+          {isSidebarCollapsed && (
+            <div>
               <h1 className="text-lg font-semibold">Notes</h1>
-              <button
-                onClick={() => setIsSidebarCollapsed(false)}
-              >
-                →
-              </button>
+              <button onClick={() => setIsSidebarCollapsed(false)}>→</button>
             </div>
-
-          )
-        }
-              <button
-                onClick={handleCreate}
-                className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
-                >
-                Create Note
-              </button>
+          )}
+          <button
+            onClick={handleCreate}
+            className="rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+          >
+            Create Note
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
