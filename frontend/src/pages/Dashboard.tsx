@@ -146,7 +146,7 @@ function Dashboard(): ReactElement {
           </div>
         )}
         
-      <div className={`flex flex-col bg-white w-50 border-r border-gray-200 h-full ${isSidebarCollapsed ? "w-64" : "w-20"}`}>
+      <div className={`flex flex-col bg-white w-50 border-r border-gray-200 h-full transition-all duration-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}>
 
         <div className="flex flex-col items-center px-4 py-6 justify-between border-b border-gray-200">
           <img src={"src/assets/logo.png"} alt="Notes logo" className="h-10 w-10 shrink-0 object-contain" />
