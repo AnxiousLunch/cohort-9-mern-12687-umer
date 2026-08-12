@@ -17,7 +17,6 @@ vi.mock("../context/AuthContext", () => ({
 }));
 
 
-// verify successful routing happens
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
 const actual = await vi.importActual('react-router-dom');
@@ -50,12 +49,10 @@ describe("LoginPage", () => {
 
 
 
-    // test render for all login components
     it('renders login form on the screen', () => {
         renderPage();
-        expect(screen.getByRole('heading', {
-        name: "Log in"
-        })).toBeInTheDocument;
+        expect(screen.getByRole('heading', {name: "Log in"}))
+        .toBeInTheDocument;
 
         expect(screen.getByPlaceholderText('Username or email'))
         .toBeInTheDocument();
@@ -67,7 +64,6 @@ describe("LoginPage", () => {
         .toBeInTheDocument();
     });
 
-    // test input fields for typing
     it('allows the user to enter credentials', async () => {
         const user = userEvent.setup();
         renderPage();
@@ -82,7 +78,6 @@ describe("LoginPage", () => {
         expect(passwordInput).toHaveValue('1234567890');
     });
 
-    // test funciton call with valid and invalid user
     it('tesst login with entered credentials', async () => {
         const user = userEvent.setup();
         const loginMock = vi.fn().mockResolvedValue(undefined);
@@ -104,7 +99,6 @@ describe("LoginPage", () => {
         expect(loginMock).toHaveBeenCalledWith('umer.safee', '1234567890');
     });
     
-    // display error message 
     it('displays error message on failed login', async () => {
         const user = userEvent.setup();
         const loginMock = vi.fn()
@@ -127,8 +121,6 @@ describe("LoginPage", () => {
         await screen.findByText('Invalid credentials')).toBeInTheDocument();
     });
 
-    // check for invalid users, empty users, invalid type input -> checked with dispaly error message
-    // check navigate to dashboard on successfull login
     it('navigates to dashboard on successful login', async () => {
         const user = userEvent.setup();
         const loginMock = vi.fn().mockResolvedValue(undefined);
@@ -148,6 +140,4 @@ describe("LoginPage", () => {
         });
         });
     });
-    // Invalid password checks -> already checked with display error message
-
 });
