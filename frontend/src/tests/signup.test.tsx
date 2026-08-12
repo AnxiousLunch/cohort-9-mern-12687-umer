@@ -52,4 +52,21 @@ describe('SignupPage', () => {
         expect(screen.getByRole("button", {name: 'Create account'})).toBeInTheDocument();
     });
 
+    it('allows user to type', async () => {
+        renderPage();
+        const user = userEvent.setup();
+
+        const usernameInput = screen.getByPlaceholderText('Username');
+        const emailInput = screen.getByPlaceholderText("Email");
+        const passwordInput = screen.getByPlaceholderText("Password");
+
+        await user.type(usernameInput, "umersafee123");
+        await user.type(emailInput, "testemail@test.com");
+        await user.type(passwordInput, "1234567890");
+
+        expect(usernameInput).toHaveValue("umersafee123");
+        expect(emailInput).toHaveValue("testemail@test.com");
+        expect(passwordInput).toHaveValue("1234567890");
+    });
+
 });
