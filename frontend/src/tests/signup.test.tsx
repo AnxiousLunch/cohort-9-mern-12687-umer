@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "../pages/SignupPage";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 vi.mock("../context/AuthContext", () => (
     {
@@ -24,8 +25,25 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
+const error = new axios.AxiosError(
+  "Request failed",
+  "ERR_BAD_REQUEST",
+  undefined,
+  undefined,
+  {
+    status: 401,
+    statusText: "Unauthorized",
+    headers: {},
+    config: {},
+    data: {
+      msg: "Invalid Credentials!",
+    },
+  }
+);
+
 const mockNavigate = vi.fn();
 const mockAuth = vi.mocked(useAuth);
+const signupMock = vi.fn().mockResolvedValue(undefined);
 
 function renderPage() {
     return render(<MemoryRouter>
@@ -37,8 +55,9 @@ describe('SignupPage', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         // default: not loading, signup resolves immediately
+        signupMock.mockResolvedValue(undefined);
         mockAuth.mockReturnValue({
-        signup: vi.fn().mockResolvedValue(undefined),
+        signup: signupMock,
         isLoading: false,
         });
     });
@@ -68,5 +87,56 @@ describe('SignupPage', () => {
         expect(emailInput).toHaveValue("testemail@test.com");
         expect(passwordInput).toHaveValue("1234567890");
     });
+
+    it('allows a signup for valid user', async () => {
+        const user = userEvent.setup();
+        renderPage();
+        
+
+        const usernameInput = screen.getByPlaceholderText('Username');
+        const emailInput = screen.getByPlaceholderText("Email");
+        const passwordInput = screen.getByPlaceholderText("Password");
+
+        
+        await user.type(usernameInput, "testuserabc");
+        await user.type(emailInput, "testmail@gmail.com");
+        await user.type(passwordInput, "1234567890");
+
+        await user.click(await screen.getByRole("button", {name: "Create account"}))
+
+        expect(signupMock).toHaveBeenCalledWith(
+            'testuserabc',
+            'testmail@gmail.com',
+            '1234567890'
+        );
+
+        expect(mockNavigate).toHaveBeenCalledWith(
+            "/dashboard",
+            { replace: true }
+        );
+    });
+
+    it('rejects signup for an invalid user', async () => {
+        const user = userEvent.setup();
+
+        renderPage();
+
+        const usernameInput = screen.getByPlaceholderText('Username');
+        const emailInput = screen.getByPlaceholderText("Email");
+        const passwordInput = screen.getByPlaceholderText("Password");
+
+        const signupMock = vi.fn().mockRejectedValue(error);
+        mockAuth.mockReturnValue({ signup: signupMock, isLoading: false });
+
+        await user.type(usernameInput, "umer.safee");
+        await user.type(emailInput, "umersafee@gmail.com");
+        await user.type(passwordInput, "1234567890");
+
+        await user.click(await screen.getByRole("button", {name: "Create account"}));
+        expect(await screen.findByText('Invalid Credentials!')).toBeInTheDocument();
+    });
+    
+    
+
 
 });
