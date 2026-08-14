@@ -40,8 +40,7 @@ export default function LoginPage(): ReactElement {
     try {
       await login(identifier, password);
       navigate(from, { replace: true });
-    } 
-    catch (err: any) {
+    } catch (err: any) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
       } else if (err instanceof Error) {
@@ -49,18 +48,15 @@ export default function LoginPage(): ReactElement {
       } else {
         setError("Something went wrong");
       }
-    };
-  }
+    }
+  };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 bg-[#fbf1c7]">
-      <div className="flex flex-col">
-        <div>
-          <h1 className="text-2xl font-semibold ">Welcome Back</h1>
-          <div className="border-1 ">Keep thoughts that matter</div>
-        </div>
-        <div className="w-full max-w-sm">
+    <main className="min-h-screen flex items-center justify-center px-6 py-12 bg-[#fbf1c7]">
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-16 itmes-center">
 
+          {/* left */}
+        <section>
           <form onSubmit={onSubmit} className="space-y-4">
             <input
               type="text"
@@ -82,11 +78,7 @@ export default function LoginPage(): ReactElement {
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-gray-500"
             />
 
-            {error && (
-              <p className="text-sm text-red-600">
-                {error}
-              </p>
-            )}
+            {error && <p className="text-sm text-red-600">{error}</p>}
 
             <button
               type="submit"
@@ -106,39 +98,38 @@ export default function LoginPage(): ReactElement {
               Sign up
             </Link>
           </p>
-        </div>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
-        <NotePreviewComponent/>
+        </section>
+
+          {/* right */}
+
+        <section className="flex-1 flex items-center justify-center">
+          <NotePreviewComponent />
+        </section>
       </div>
     </main>
   );
 }
 
-
 export function NotePreviewComponent() {
   return (
-      <div className="bg-gray-50 w-80 h-80 rounded-xl border-1">
-        
-        <div className="bg-[#f2e5bc] w-full h-8 rounded-t-xl top-0 flex items-center px-1 py-2 justify-between">
-          <div className="">Untitled</div>
-          <div className="flex gap-3">
-            <div className="w-3 h-3 rounded-full bg-[#b8bb26]" />
-            <div className="w-3 h-3 rounded-full bg-[#fabd2f]" />
-            <div className="w-3 h-3 rounded-full bg-[#fb4934]" />
-          </div>
+    <div className="bg-gray-50 w-80 h-80 rounded-xl border-1">
+      <div className="bg-[#f2e5bc] w-full h-8 rounded-t-xl top-0 flex items-center px-1 py-2 justify-between">
+        <div className="">Untitled</div>
+        <div className="flex gap-3">
+          <div className="w-3 h-3 rounded-full bg-[#b8bb26]" />
+          <div className="w-3 h-3 rounded-full bg-[#fabd2f]" />
+          <div className="w-3 h-3 rounded-full bg-[#fb4934]" />
         </div>
-
-
-        <div className="mt-4 px-4">
-          <h1>Things to remember:</h1>
-          <ul>
-            <li>Buy eggs</li>
-            <li>Fix the editor</li>
-            <li>Decide name for project</li>
-          </ul>
-        </div>
-      
       </div>
+
+      <div className="mt-4 px-4">
+        <h1>Things to remember:</h1>
+        <ul>
+          <li>Buy eggs</li>
+          <li>Fix the editor</li>
+          <li>Decide name for project</li>
+        </ul>
+      </div>
+    </div>
   );
 }
