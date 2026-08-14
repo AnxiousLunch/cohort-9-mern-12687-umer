@@ -140,114 +140,136 @@ function Dashboard(): ReactElement {
 
   return (
     // Main container
-    <div className="flex h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col h-screen bg-gray-50 text-gray-900 p-3 gap-3">
       {error && (
         <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white">
           {error}
         </div>
       )}
 
-      {/* {sidebar continer} */}
-      <div
-        className={`flex h-full flex-col shrink-0 border-b border-gray-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}
-      >
-        {/* sidebar header */}
-        <div className={`flex items-center ${isSidebarCollapsed ? "justify-center px-4 py-4" : "justify-between px-2 py-4"}`}>
-
-          <div className="flex items-center gap-3">
-
-            <img
-              src={"src/assets/logo.png"}
-              alt="Notes logo"
-              className="h-10 w-10 shrink-0 object-contain"
-            />
-
-            {!isSidebarCollapsed && (
-              <h1 className="text-lg font-semibold">
-                Notes
-              </h1>
-            )}
-          </div>
-
-
-          <button
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className="rounded-md px-2 py-1 text-gray-500 hover:bg-gray-100">
-            {isSidebarCollapsed ? "→" : "←"}
-          </button>
+      {/* tooldbar */}
+      <div className="flex flex-row bg-red-500 h-10 shrink-0 items-center gap-2 px-3 rounded-lg ">
+        <div className="flex items-center gap-2">
+          <button>B</button>
+          <button>I</button>
+          <button>U</button>
         </div>
 
-        <div className="px-3 pb-3">
-          <button
-            onClick={handleCreate}
-            className={`rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50 w-full
-            ${isSidebarCollapsed ? "text-xl" : "px-4;"}`}
-          >
-            {isSidebarCollapsed ? "+" : "Create Note"}
-          </button>
-        </div>
-    
-        <div className="flex-1 overflow-y-auto p-3 space-y-1">
-          {notes.map((note) => (
-            <button
-              key={note.id}
-              onClick={() => setSelectedId(note.id)}
-              className="px-2 py-2 w-full rounded-md text-sm"
-            >
-              {note.title || "Untitled"}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <button>H1</button>
+          <button>H2</button>
         </div>
 
-        <div className="flex items-center p-4 justify-between border-b border-gray-200">
-          <button
-            onClick={handleLogout}
-            className="rounder border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
-          >
-            Logout
-          </button>
+        <div className="flex items-center gap-2">
+          <button>•</button>
+          <button>1.</button>
         </div>
       </div>
+      
+      {/* {sidebar continer} */}
+      <div className="flex flex-1 min-h-0 gap-3">
 
-      <div className="min-w-0 flex-1 p-4 overflow-y-auto">
-        {selectedNote ? (
-          <div className="mx-auto max-w-4xl p-8">
-            <div className="px-6 py-4">
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="title"
-                className="border-none bg-transparent text-3xl font-semibold outline-none"
+        <div
+          className={`flex h-full flex-col rounded-2xl border shrink-0 border-b border-gray-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}
+        >
+          {/* sidebar header */}
+          <div className={`flex items-center ${isSidebarCollapsed ? "justify-center px-4 py-4" : "justify-between px-2 py-4"}`}>
+
+            <div className="flex items-center gap-3">
+
+              <img
+                src={"src/assets/logo.png"}
+                alt="Notes logo"
+                className="h-10 w-10 shrink-0 object-contain"
               />
+
+              {!isSidebarCollapsed && (
+                <h1 className="text-lg font-semibold">
+                  Notes
+                </h1>
+              )}
             </div>
 
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={20}
-              placeholder="content"
-              className="w-full border-none bg-transparent border-gray-900 py-2 text-base resize-none"
-            />
 
-            <div className="flex items-center justify-between py-3">
-              <button
-                onClick={handleSave}
-                className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800"
-              >
-                Save
-              </button>
-
-              <button
-                onClick={handleDelete}
-                className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-              >
-                Delete
-              </button>
-            </div>
+            <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="rounded-md px-2 py-1 text-gray-500 hover:bg-gray-100">
+              {isSidebarCollapsed ? "→" : "←"}
+            </button>
           </div>
-        ) : (
-          <div> Nothing Selected </div>
-        )}
+
+          <div className="px-3 pb-3">
+            <button
+              onClick={handleCreate}
+              className={`rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50 w-full
+              ${isSidebarCollapsed ? "text-xl" : "px-4;"}`}
+            >
+              {isSidebarCollapsed ? "+" : "Create Note"}
+            </button>
+          </div>
+      
+          <div className="flex-1 overflow-y-auto p-3 space-y-1">
+            {notes.map((note) => (
+              <button
+                key={note.id}
+                onClick={() => setSelectedId(note.id)}
+                className="px-2 py-2 w-full rounded-md text-sm"
+              >
+                {note.title || "Untitled"}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center p-4 justify-between border-b border-gray-200">
+            <button
+              onClick={handleLogout}
+              className="rounder border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div className="min-w-0 flex-1 p-4 overflow-y-auto">
+          {selectedNote ? (
+            <div className="mx-auto max-w-4xl p-8">
+              <div className="px-6 py-4">
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="title"
+                  className="border-none bg-transparent text-3xl font-semibold outline-none"
+                />
+              </div>
+
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={20}
+                placeholder="content"
+                className="w-full border-none bg-transparent border-gray-900 py-2 text-base resize-none"
+              />
+
+              <div className="flex items-center justify-between py-3">
+                <button
+                  onClick={handleSave}
+                  className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                >
+                  Save
+                </button>
+
+                <button
+                  onClick={handleDelete}
+                  className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div> Nothing Selected </div>
+          )}
+        </div>
       </div>
     </div>
   );
