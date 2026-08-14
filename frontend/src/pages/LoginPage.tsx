@@ -52,7 +52,7 @@ export default function LoginPage(): ReactElement {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-12 bg-[#fbf1c7]">
+    <main className="min-h-screen flex items-center justify-center px-6 py-12 bg-[#fbf1c7] font-mono">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-16 itmes-center">
 
           {/* left */}
@@ -90,13 +90,13 @@ export default function LoginPage(): ReactElement {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded bg-gray-900 px-3 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+              className="w-full h-12 rounded-md bg-[#3c3836] text-white text-sm px-3 py-2 hover:bg-[#504945] disabled:opacity-50"
             >
               {isLoading ? "Logging in…" : "Log in"}
             </button>
           </form>
 
-          <p className="mt-6 text-sm text-gray-600">
+          <p className="mt-6 text-sm text-[#7c6f64]">
             Don't have an account?{" "}
             <Link
               to="/signup"
