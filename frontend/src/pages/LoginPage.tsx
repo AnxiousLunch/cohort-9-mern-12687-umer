@@ -56,10 +56,10 @@ export default function LoginPage(): ReactElement {
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-16 itmes-center">
 
           {/* left */}
-        <section>
-          <div>
-            <p className="text-xs mb-4">TASKIT</p>
-            <h1 className="text-2xl font-semibold">Welcome back.</h1>
+        <section className="w-full max-w-md mx-auto">
+          <div className="mb-12">
+            <p className="text-xs mb-4 text-[#7c6f64]">TASKIT</p>
+            <h1 className="text-5xl font-semibold">Welcome back.</h1>
 
             <p className="mt-4 ">Keep thoughts that actually matter</p>
           </div>
@@ -72,7 +72,7 @@ export default function LoginPage(): ReactElement {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="Username or email"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-gray-500"
+              className="w-full h-12 border border-[#d5c4a1] rounded-md px-4 py-2 focus:outline-none focus:border-[#b57614] bg-[#f2e5bc] text-[#3c3836] focus:ring-2"
             />
 
             <input
@@ -82,10 +82,10 @@ export default function LoginPage(): ReactElement {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-gray-500"
+              className="w-full h-12 border border-[#d5c4a1] rounded-md px-4 py-2 focus:outline-none focus:border-[#b57614] bg-[#f2e5bc] text-[#3c3836] focus:ring-2"
             />
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-[#9d0006]">{error}</p>}
 
             <button
               type="submit"
