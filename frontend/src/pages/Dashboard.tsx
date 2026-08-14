@@ -140,7 +140,7 @@ function Dashboard(): ReactElement {
 
   return (
     // Main container
-    <div className="flex flex-col h-screen bg-gray-50 text-gray-900 p-3 gap-3">
+    <div className="flex flex-col h-screen bg-gray-50 text-gray-900 p-3 gap-3 font-mono">
       {error && (
         <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white">
           {error}
