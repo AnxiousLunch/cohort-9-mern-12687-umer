@@ -9,6 +9,8 @@ import { useAuth } from "../context/AuthContext";
 import { type Note } from "../types/notes";
 import axios from "axios";
 
+import { useRef } from "react";
+
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -19,6 +21,14 @@ function Dashboard(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">("saved");
+
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipAutoSave = useRef(false);
+
+      const selectedNote = notes.find((note) => note.id === selectedId);
+
 
   useEffect(() => {
     async function fetchNotes() {
@@ -116,17 +126,74 @@ function Dashboard(): ReactElement {
     }
   };
 
-  const selectedNote = notes.find((note) => note.id === selectedId);
+
+
 
   useEffect(() => {
+    if (skipAutoSave.current) {
+      skipAutoSave.current = false;
+      return;
+    }
+
+    if (!selectedNote) {
+      return;
+    }
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    setSaveStatus("saving");
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      try { 
+        const updatedNote = await updateNote(selectedNote.id, title, content);
+        setNotes((this_notes) =>
+          this_notes.map((note) =>
+             note.id === selectedNote.id ? updatedNote : note
+          ));
+        setSaveStatus("saved");
+
+      } catch(err) {
+        setSaveStatus("error");
+         if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.msg || "Failed to save ntoe");
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong");
+        }
+      }
+    }, 900);
+
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [title, content]);
+
+
+  // useEffect(() => {
+  //   if (selectedNote) {
+  //     setTitle(selectedNote.title || "");
+  //     setContent(selectedNote.content || "");
+  //   } else {
+  //     setTitle("");
+  //     setContent("");
+  //   }
+  // }, [selectedNote]);
+  useEffect(() => {
+    skipAutoSave.current = true;
     if (selectedNote) {
-      setTitle(selectedNote.title || "");
-      setContent(selectedNote.content || "");
+      setTitle(selectedNote.title || ""); 
+      setContent(selectedNote.title || ""); 
     } else {
       setTitle("");
       setContent("");
     }
-  }, [selectedNote]);
+  }, []);
 
   useEffect(() => {
     if (!error) return;
@@ -251,12 +318,17 @@ function Dashboard(): ReactElement {
               />
 
               <div className="flex items-center justify-between py-3 mt-2">
-                <button
+                {/* <button
                   onClick={handleSave}
                   className="rounded-lg border border-[#b8bb26] bg-[#b8bb26] text-[#282828] px-5 py-2 text-sm font-medium  hover:bg-[#98971a] transition"
                 >
                   Save
-                </button>
+                </button> */}
+                <span className="text-sm text-[#928374]">
+                  {saveStatus == "saving" && "Saving..."}
+                  {saveStatus == "saved" && "Saved..."}
+                  {saveStatus == "error" && "Failed to save..."}
+                </span>
 
                 <button
                   onClick={handleDelete}
