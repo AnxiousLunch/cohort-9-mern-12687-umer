@@ -1,3 +1,21 @@
+// Color theme obtained from
+// https://github.com/morhetz/gruvbox#palette
+
+/*
+Background       #fbf1c7
+Surface          #f2e5bc
+Primary text     #3c836
+Muted text       #7c6f64
+
+Yellow           #b57614
+Orange           #af3a03
+Green            #79740e
+Aqua             #427b58
+Blue             #076678
+Red              #9d0006
+Purple           #8f3f71
+*/
+
 import { useState, type FormEvent, type ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -35,10 +53,10 @@ export default function LoginPage(): ReactElement {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
+    <main className="min-h-screen flex items-center justify-center p-6 bg-[#fbf1c7]">
       <div className="flex flex-col">
         <div>
-          <h1>Welcome Back</h1>
+          <h1 className="text-2xl font-semibold ">Welcome Back</h1>
           <div className="border-1 ">Keep thoughts that matter</div>
         </div>
         <div className="w-full max-w-sm">
@@ -100,14 +118,14 @@ export default function LoginPage(): ReactElement {
 
 export function NotePreviewComponent() {
   return (
-      <div className="bg-white w-80 h-80 rounded-xl border-1">
+      <div className="bg-gray-50 w-80 h-80 rounded-xl border-1">
         
-        <div className="bg-red-600 w-full h-8 rounded-t-xl top-0 flex items-center px-1 py-2 justify-between">
+        <div className="bg-[#f2e5bc] w-full h-8 rounded-t-xl top-0 flex items-center px-1 py-2 justify-between">
           <div className="">Untitled</div>
           <div className="flex gap-3">
-            <div className="w-4 h-4 bg-green-600 rounded-xl"></div>
-            <div className="w-4 h-4 bg-green-600 rounded-xl"></div>
-            <div className="w-4 h-4 bg-green-600 rounded-xl"></div>
+            <div className="w-3 h-3 rounded-full bg-[#b8bb26]" />
+            <div className="w-3 h-3 rounded-full bg-[#fabd2f]" />
+            <div className="w-3 h-3 rounded-full bg-[#fb4934]" />
           </div>
         </div>
 
