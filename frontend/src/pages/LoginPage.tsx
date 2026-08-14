@@ -120,7 +120,7 @@ export default function LoginPage(): ReactElement {
 export function NotePreviewComponent() {
   return (
     <div className="relative w-80 min-h-80 bg-[#f2e5bc] border border-[#d5c4a1] rounded-lg -rotate-2 shadow-[10px_10px_0px_#d5c4a1]">
-      <div className="bg-[#f2e5bc] w-full h-8 rounded-t-xl top-0 flex items-center px-1 py-2 justify-between">
+      <div className="bg-[#3c3836] text-[#fbf1c7] w-full h-8 rounded-t-xl top-0 flex items-center px-4 py-2 justify-between">
         <div className="">Untitled</div>
         <div className="flex gap-3">
           <div className="w-3 h-3 rounded-full bg-[#b8bb26]" />
