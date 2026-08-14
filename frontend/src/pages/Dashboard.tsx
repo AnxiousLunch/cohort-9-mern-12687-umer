@@ -140,29 +140,29 @@ function Dashboard(): ReactElement {
 
   return (
     // Main container
-    <div className="flex flex-col h-screen bg-gray-50 text-gray-900 p-3 gap-3 font-mono">
+    <div className="flex flex-col h-screen p-3 gap-3 font-mono bg-[#282828]">
       {error && (
-        <div className="absolute top-5 right-5 z-100 rounded-md border bg-red-500 px-4 py-4 text-sm text-white">
+        <div className="absolute top-5 right-5 z-100 rounded-md border border-[#fb4934] bg-[#fb4934] px-4 py-4 text-sm text-[#282828]">
           {error}
         </div>
       )}
 
       {/* tooldbar */}
-      <div className="flex flex-row bg-red-500 h-10 shrink-0 items-center gap-2 px-3 rounded-lg ">
+      <div className="flex flex-row bg-[#3c3836] h-10 shrink-0 items-center gap-2 px-3 rounded-lg ">
         <div className="flex items-center gap-2">
-          <button>B</button>
-          <button>I</button>
-          <button>U</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">B</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">I</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">U</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button>H1</button>
-          <button>H2</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">H1</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">H2</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button>•</button>
-          <button>1.</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">•</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">1.</button>
         </div>
       </div>
       
@@ -170,7 +170,7 @@ function Dashboard(): ReactElement {
       <div className="flex flex-1 min-h-0 gap-3">
 
         <div
-          className={`flex h-full flex-col rounded-2xl border shrink-0 border-b border-gray-200 ${isSidebarCollapsed ? "w-16" : "w-64"}`}
+          className={`flex h-full flex-col rounded-2xl border shrink-0 border-b border-[#504945] bg-[#3c3836] ${isSidebarCollapsed ? "w-16" : "w-64"}`}
         >
           {/* sidebar header */}
           <div className={`flex items-center ${isSidebarCollapsed ? "justify-center px-4 py-4" : "justify-between px-2 py-4"}`}>
@@ -184,7 +184,7 @@ function Dashboard(): ReactElement {
               />
 
               {!isSidebarCollapsed && (
-                <h1 className="text-lg font-semibold">
+                <h1 className="text-lg font-semibold text-[#ebdbb2]">
                   Notes
                 </h1>
               )}
@@ -193,7 +193,7 @@ function Dashboard(): ReactElement {
 
             <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="rounded-md px-2 py-1 text-gray-500 hover:bg-gray-100">
+            className="rounded-md px-2 py-1 text-[#928374] hover:bg-[#504945]">
               {isSidebarCollapsed ? "→" : "←"}
             </button>
           </div>
@@ -201,7 +201,7 @@ function Dashboard(): ReactElement {
           <div className="px-3 pb-3">
             <button
               onClick={handleCreate}
-              className={`rounded-md border border-gray-300 bg-white p-4 text-black hover:bg-gray-50 w-full
+              className={`rounded-md border border-[#504945] bg-[#282828] p-4 text-[#ebdbb2] hover:bg-[#504945] w-full
               ${isSidebarCollapsed ? "text-xl" : "px-4;"}`}
             >
               {isSidebarCollapsed ? "+" : "Create Note"}
@@ -213,32 +213,32 @@ function Dashboard(): ReactElement {
               <button
                 key={note.id}
                 onClick={() => setSelectedId(note.id)}
-                className="px-2 py-2 w-full rounded-md text-sm"
+                className={`px-2 py-2 w-full rounded-md text-sm transition ${note.id == selectedId ? "bg-[#675e59] text-[#ebdbb2]" : "text-[#edbb2] hover:bg-[#50942]"}`}
               >
                 {note.title || "Untitled"}
               </button>
             ))}
           </div>
 
-          <div className="flex items-center p-4 justify-between border-b border-gray-200">
+          <div className="flex items-center p-4 justify-between border-t border-[#504945]">
             <button
               onClick={handleLogout}
-              className="rounder border border-gray-300 bg-white p-4 text-black hover:bg-gray-50"
+              className="rounder border border-[#504945] bg-[#282828] p-4 text-[#ebdbb2] hover:bg-[#504945]"
             >
               Logout
             </button>
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 p-4 overflow-y-auto">
+        <div className="min-w-0 flex-1 p-4 overflow-y-auto border-[#504945] bg-[#3c3836] rounded-2xl">
           {selectedNote ? (
-            <div className="mx-auto max-w-4xl p-8">
+            <div className="mx-auto max-w-4xl p-8 h-full">
               <div className="px-6 py-4">
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="title"
-                  className="border-none bg-transparent text-3xl font-semibold outline-none"
+                  className="border-none bg-transparent text-3xl font-semibold outline-none text-[#ebdbb2] placeholder-[#928374]"
                 />
               </div>
 
@@ -247,27 +247,27 @@ function Dashboard(): ReactElement {
                 onChange={(e) => setContent(e.target.value)}
                 rows={20}
                 placeholder="content"
-                className="w-full border-none bg-transparent border-gray-900 py-2 text-base resize-none"
+                className="w-full  outline-none border-none bg-transparent border-gray-900 py-2 resize-none text-base text-[#ebdbb2] placeholder-[#928374]"
               />
 
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-center justify-between py-3 mt-2">
                 <button
                   onClick={handleSave}
-                  className="rounded-md border border-gray-900 bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                  className="rounded-lg border border-[#b8bb26] bg-[#b8bb26] text-[#282828] px-5 py-2 text-sm font-medium  hover:bg-[#98971a] transition"
                 >
                   Save
                 </button>
 
                 <button
                   onClick={handleDelete}
-                  className="rounded-md border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                  className="rounded-lg border border-[#fb4934] text-[#fb4934] px-5 py-2 text-sm font-medium  hover:bg-[#282828] transition"
                 >
                   Delete
                 </button>
               </div>
             </div>
           ) : (
-            <div> Nothing Selected </div>
+            <div className="text-[#928374]  flex h-full justify-center"> Nothing Selected </div>
           )}
         </div>
       </div>
