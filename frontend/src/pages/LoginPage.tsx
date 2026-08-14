@@ -57,6 +57,13 @@ export default function LoginPage(): ReactElement {
 
           {/* left */}
         <section>
+          <div>
+            <p className="text-xs mb-4">TASKIT</p>
+            <h1 className="text-2xl font-semibold">Welcome back.</h1>
+
+            <p className="mt-4 ">Keep thoughts that actually matter</p>
+          </div>
+
           <form onSubmit={onSubmit} className="space-y-4">
             <input
               type="text"
