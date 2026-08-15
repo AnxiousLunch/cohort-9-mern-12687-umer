@@ -10,6 +10,10 @@ import { type Note } from "../types/notes";
 import axios from "axios";
 import logo from "../assets/logo.png"
 import { useRef } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "@tiptap/markdown";
+import { unstable_batchedUpdates } from "react-dom";
 
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -26,7 +30,18 @@ function Dashboard(): ReactElement {
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipAutoSave = useRef(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit, Markdown,
+    ], 
+    content: content,
+    onUpdate: ({editor}) => {
+      const markdown  = editor.getMarkdown();
+      setContent(markdown);
+    }
+  });
       const selectedNote = notes.find((note) => note.id === selectedId);
 
 
@@ -67,6 +82,10 @@ function Dashboard(): ReactElement {
 
   const handleDelete = async () => {
     try {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = null;
+      }
       if (selectedNote) {
         await deleteNote(selectedNote.id);
         const rest = notes.filter((note) => note.id !== selectedNote.id);
@@ -100,40 +119,13 @@ function Dashboard(): ReactElement {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      if (selectedNote) {
-        const updatedNote = await updateNote(selectedNote.id, title, content);
-
-        setNotes((currentNotes) => {
-          return currentNotes.map((note) => {
-            if (note.id === selectedNote.id) {
-              return updatedNote;
-            }
-
-            return note;
-          });
-        });
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.msg || "Login failed");
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Something went wrong");
-      }
-    }
-  };
-
-
-
 
   useEffect(() => {
     if (skipAutoSave.current) {
       skipAutoSave.current = false;
       return;
     }
+    
 
     if (!selectedNote) {
       return;
@@ -174,6 +166,40 @@ function Dashboard(): ReactElement {
     };
   }, [title, content]);
 
+  const applyFormatting = (prefix: string, suffix: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const selectedArea = content.substring(start, end);
+
+    const updatedContent = content.substring(0, start) + prefix + selectedArea + suffix + content.substring(end);
+
+    setContent(updatedContent);
+
+  }
+
+  const formatEntireLine = (prefix: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }  
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const selectedArea = content.substring(start, end);
+    
+    const lines = selectedArea.split('\n');
+    const newlines = lines.map(line => line.trim() ? prefix + line : line);
+    const newselectedArea = newlines.join('\n');
+
+    const newcontent = content.substring(0, start) + newselectedArea + content.substring(end);
+
+  }
+
 
   // useEffect(() => {
   //   if (selectedNote) {
@@ -186,14 +212,18 @@ function Dashboard(): ReactElement {
   // }, [selectedNote]);
   useEffect(() => {
     skipAutoSave.current = true;
+    if (!editor) {
+      return;
+    }
+
     if (selectedNote) {
       setTitle(selectedNote.title || ""); 
-      setContent(selectedNote.content || ""); 
+      editor.commands.setContent(selectedNote.content || "", {emitUpdate: false});
     } else {
       setTitle("");
       setContent("");
     }
-  }, [selectedNote]);
+  }, [selectedNote, editor]);
 
   useEffect(() => {
     if (!error) return;
@@ -217,19 +247,26 @@ function Dashboard(): ReactElement {
       {/* tooldbar */}
       <div className="flex flex-row bg-[#3c3836] h-10 shrink-0 items-center gap-2 px-3 rounded-lg ">
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">B</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">I</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">U</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+          onClick={() => editor?.chain().focus().toggleBold().run()}>B</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+           onClick={() => editor?.chain().focus().toggleItalic().run()}>I</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+           onClick={() => editor?.chain().focus().toggleUnderline().run()}>U</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">H1</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">H2</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+           onClick={() => editor?.chain().focus().toggleHeading({level: 1}).run()}>H1</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+          onClick={() => editor?.chain().focus().toggleHeading({level: 2}).run()}>H2</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">•</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">1.</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+          onClick={() => editor?.chain().focus().toggleBulletList().run()}>•</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
+          onClick={() => editor?.chain().focus().toggleOrderedList().run()}>1.</button>
         </div>
       </div>
       
@@ -309,13 +346,26 @@ function Dashboard(): ReactElement {
                 />
               </div>
 
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={20}
-                placeholder="content"
-                className="w-full  outline-none border-none bg-transparent border-gray-900 py-2 resize-none text-base text-[#ebdbb2] placeholder-[#928374]"
-              />
+
+              {/* <div>
+                <textarea
+                  ref = {textareaRef}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={20}
+                  placeholder="content"
+                  className="w-full  outline-none border-none bg-transparent border-gray-900 py-2 resize-none text-base text-[#ebdbb2] placeholder-[#928374]"
+                />
+                <div className="prose prose-invert max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {content}
+                  </ReactMarkdown>
+                </div>
+              
+              </div> */}
+              <EditorContent editor={editor} 
+             className="editor"
+                />
 
               <div className="flex items-center justify-between py-3 mt-2">
                 {/* <button
