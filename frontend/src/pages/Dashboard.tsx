@@ -8,7 +8,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { type Note } from "../types/notes";
 import axios from "axios";
-
+import logo from "../assets/logo.png"
 import { useRef } from "react";
 
 function Dashboard(): ReactElement {
@@ -245,7 +245,7 @@ function Dashboard(): ReactElement {
             <div className="flex items-center gap-3">
 
               <img
-                src={"src/assets/logo.png"}
+                src={logo}
                 alt="Notes logo"
                 className="h-10 w-10 shrink-0 object-contain"
               />
