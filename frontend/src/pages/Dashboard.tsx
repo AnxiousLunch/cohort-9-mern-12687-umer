@@ -38,7 +38,7 @@ function Dashboard(): ReactElement {
         if (fetchedNotes.length > 0) {
           setSelectedId(fetchedNotes[0].id);
         }
-      } catch (err: any) {
+      } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.msg || "Login failed");
         } else if (err instanceof Error) {
@@ -54,7 +54,7 @@ function Dashboard(): ReactElement {
   const handleLogout = async () => {
     try {
       await logout();
-    } catch (err: any) {
+    } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
       } else if (err instanceof Error) {
@@ -73,7 +73,7 @@ function Dashboard(): ReactElement {
         setNotes(rest);
         setSelectedId(rest[0]?.id ?? null);
       }
-    } catch (err: any) {
+    } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
       } else if (err instanceof Error) {
@@ -89,7 +89,7 @@ function Dashboard(): ReactElement {
       const createdNote = await createNote("Untitled Noted");
       setNotes((currentNotes) => [createdNote, ...currentNotes]);
       setSelectedId(createdNote.id);
-    } catch (err: any) {
+    } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
       } else if (err instanceof Error) {
@@ -115,7 +115,7 @@ function Dashboard(): ReactElement {
           });
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
       } else if (err instanceof Error) {
