@@ -217,19 +217,19 @@ function Dashboard(): ReactElement {
       {/* tooldbar */}
       <div className="flex flex-row bg-[#3c3836] h-10 shrink-0 items-center gap-2 px-3 rounded-lg ">
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">B</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">I</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">U</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">B</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">I</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">U</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">H1</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">H2</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">H1</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">H2</button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">•</button>
-          <button className="rounded-md px-2 py-1 text-sm text-[#edbb2] hover:bg-[#504945] transition">1.</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">•</button>
+          <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition">1.</button>
         </div>
       </div>
       
@@ -280,7 +280,7 @@ function Dashboard(): ReactElement {
               <button
                 key={note.id}
                 onClick={() => setSelectedId(note.id)}
-                className={`px-2 py-2 w-full rounded-md text-sm transition ${note.id == selectedId ? "bg-[#675e59] text-[#ebdbb2]" : "text-[#edbb2] hover:bg-[#50942]"}`}
+                className={`px-2 py-2 w-full rounded-md text-sm transition ${note.id == selectedId ? "bg-[#675e59] text-[#ebdbb2]" : "text-[#ebdbb2] hover:bg-[#50942]"}`}
               >
                 {note.title || "Untitled"}
               </button>
