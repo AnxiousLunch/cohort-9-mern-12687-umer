@@ -188,12 +188,12 @@ function Dashboard(): ReactElement {
     skipAutoSave.current = true;
     if (selectedNote) {
       setTitle(selectedNote.title || ""); 
-      setContent(selectedNote.title || ""); 
+      setContent(selectedNote.content || ""); 
     } else {
       setTitle("");
       setContent("");
     }
-  }, []);
+  }, [selectedNote]);
 
   useEffect(() => {
     if (!error) return;
