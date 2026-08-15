@@ -119,7 +119,7 @@ export default function LoginPage(): ReactElement {
   );
 }
 
-export function NotePreviewComponent() {
+export function NotePreviewComponent(): ReactElement {
   return (
     <div className="relative w-80 min-h-80 bg-[#f2e5bc] border border-[#d5c4a1] rounded-lg -rotate-2 shadow-[10px_10px_0px_#d5c4a1]">
       <div className="bg-[#3c3836] text-[#fbf1c7] w-full h-8 rounded-t-xl top-0 flex items-center px-4 py-2 justify-between">
