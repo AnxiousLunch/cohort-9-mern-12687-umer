@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "../pages/SignupPage";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import type { ReactElement } from "react";
 
 vi.mock("../context/AuthContext", () => (
@@ -35,11 +35,13 @@ const error = new axios.AxiosError(
     status: 401,
     statusText: "Unauthorized",
     headers: {},
-    config: {},
+    config: {
+        headers: new axios.AxiosHeaders(),
+    } as InternalAxiosRequestConfig,
     data: {
       msg: "Invalid Credentials!",
     },
-  }
+  },
 );
 
 const mockNavigate = vi.fn();
