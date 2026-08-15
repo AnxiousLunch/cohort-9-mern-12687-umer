@@ -43,6 +43,7 @@ export default function SignupPage(): ReactElement {
           </h1>
 
           <form onSubmit={onSubmit} className="space-y-4 mt-12">
+            <label htmlFor="username" className="sr-only"></label>
             <input
               type="text"
               autoComplete="username"
@@ -55,6 +56,7 @@ export default function SignupPage(): ReactElement {
               className="w-full h-12 border border-[#d5c4a1] rounded-md px-4 py-2 focus:outline-none focus:border-[#b57614] bg-[#f2e5bc] text-[#3c3836] focus:ring-2"
             />
 
+            <label htmlFor="email" className="sr-only"></label>
             <input
               type="email"
               autoComplete="email"
@@ -65,6 +67,7 @@ export default function SignupPage(): ReactElement {
               className="w-full h-12 border border-[#d5c4a1] rounded-md px-4 py-2 focus:outline-none focus:border-[#b57614] bg-[#f2e5bc] text-[#3c3836] focus:ring-2"
             />
 
+            <label htmlFor="password" className="sr-only"></label>
             <input
               type="password"
               autoComplete="new-password"
