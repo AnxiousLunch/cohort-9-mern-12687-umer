@@ -12,6 +12,8 @@ sonar-scanner   -Dsonar.host.url=http://localhost:9000   -Dsonar.token="$SONAR_T
 
 - [ ] Serialize autosave. Backend changes may be required to properly reject stale writes.
 
-- [ ] Tool bar does not work
+- [x] Tool bar does not work
 
 - [ ] track separate ocmmands to run sonnar scanner
+
+- [x] Fix Login test to be according to heading change
