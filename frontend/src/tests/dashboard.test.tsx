@@ -31,7 +31,7 @@ const mockCreateNote = vi.mocked(createNote);
 const mockUpdateNote = vi.mocked(updateNote);
 const mockDeleteNote = vi.mocked(deleteNote);
 
-function renderPage() {
+function renderPage(): ReturnType<typeof render> {
     return render(
         <Dashboard />
     );
@@ -58,48 +58,66 @@ describe('Dashboard', () => {
     });
 
     it('renders UI', async () => {
-        renderPage();
-
-        expect(await screen.findByText('Note 1')).toBeInTheDocument();
-
-        expect(await screen.getByText('Notes')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Create Note' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+        try {
+            renderPage();
+    
+            expect(await screen.findByText('Note 1')).toBeInTheDocument();
+    
+            expect(await screen.getByText('Notes')).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'Create Note' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+        } catch (err) {
+            console.log("Faild to render dashvoard", err);
+            throw err;
+        }
     });
 
     it('Showes error message when loading notes fails', async () => {
-        mockGetNotes.mockRejectedValue(new Error("Failed to load notes"));
-        renderPage();
-        expect(await screen.findByText("Failed to load notes")).toBeInTheDocument();
+        try {
+            mockGetNotes.mockRejectedValue(new Error("Failed to load notes"));
+            renderPage();
+            expect(await screen.findByText("Failed to load notes")).toBeInTheDocument();
+        } catch ( err ) {
+            console.log("Failed the 'show error' test: ", err);
+            throw err;
+        }
     });
 
     it('creates a new note and displays', async () => {
-        mockGetNotes.mockResolvedValue([]);
-        renderPage();
-        const user = userEvent.setup();
-
-        expect(screen.getByText('Nothing Selected')).toBeInTheDocument();
-
-        await user.click(screen.getByRole('button', { name: 'Create Note' }));
-
-        expect(await screen.findByDisplayValue('Note 2')).toBeInTheDocument();
+        try {
+            mockGetNotes.mockResolvedValue([]);
+            renderPage();
+            const user = userEvent.setup();
     
-        expect(screen.getByText('Note 2')).toBeInTheDocument();
+            expect(screen.getByText('Nothing Selected')).toBeInTheDocument();
+    
+            await user.click(screen.getByRole('button', { name: 'Create Note' }));
+    
+            expect(await screen.findByDisplayValue('Note 2')).toBeInTheDocument();
+        
+            expect(screen.getByText('Note 2')).toBeInTheDocument();
+        } catch ( err ) {
+            console.log("Failed to create note", err);
+            throw err;
+        }
     });
 
     it('deletes notes properly', async () => {
-        const user = userEvent.setup();
-        renderPage();
-
-        await screen.findByText('Note 1');
-        await user.click(screen.getByRole("button", {name: 'Delete'}));
-
-        await waitFor(() => {
-            expect (mockDeleteNote).toHaveBeenCalledWith(1); // one here refers to id
-        });
-
-        expect(screen.queryByText("Note 1")).not.toBeInTheDocument();
-        
-
+        try {
+            const user = userEvent.setup();
+            renderPage();
+    
+            await screen.findByText('Note 1');
+            await user.click(screen.getByRole("button", {name: 'Delete'}));
+    
+            await waitFor(() => {
+                expect (mockDeleteNote).toHaveBeenCalledWith(1); // one here refers to id
+            });
+    
+            expect(screen.queryByText("Note 1")).not.toBeInTheDocument();
+        } catch ( err ) {
+            console.log("Faild to dlte notes", err);
+            throw err;
+        }
     });
 });

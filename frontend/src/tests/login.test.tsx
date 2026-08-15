@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
+import type { ReactElement } from 'react';
 
 afterEach(() => {
   cleanup();
@@ -26,7 +27,7 @@ return {
 };
 });
 
-function renderPage() {
+function renderPage(): ReturnType<typeof render> {
   return render(
     <MemoryRouter>
       <LoginPage />
@@ -65,79 +66,99 @@ describe("LoginPage", () => {
     });
 
     it('allows the user to enter credentials', async () => {
-        const user = userEvent.setup();
-        renderPage();
-
-        const identifierInput = screen.getByPlaceholderText('Username or email');
-        const passwordInput = screen.getByPlaceholderText('Password');
-
-        await user.type(identifierInput, 'umer.safee');
-        await user.type(passwordInput, '1234567890');
-
-        expect(identifierInput).toHaveValue('umer.safee');
-        expect(passwordInput).toHaveValue('1234567890');
+        try {
+            const user = userEvent.setup();
+            renderPage();
+    
+            const identifierInput = screen.getByPlaceholderText('Username or email');
+            const passwordInput = screen.getByPlaceholderText('Password');
+    
+            await user.type(identifierInput, 'umer.safee');
+            await user.type(passwordInput, '1234567890');
+    
+            expect(identifierInput).toHaveValue('umer.safee');
+            expect(passwordInput).toHaveValue('1234567890');
+        }catch ( err ) {
+            console.log("Faild to enter credentials", err);
+            throw err;
+        }
     });
 
     it('tesst login with entered credentials', async () => {
-        const user = userEvent.setup();
-        const loginMock = vi.fn().mockResolvedValue(undefined);
-        mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
-
-        renderPage();
-
-        await user.type(
-        screen.getByPlaceholderText('Username or email'),
-        'umer.safee'
-        );
-        await user.type(
-        screen.getByPlaceholderText('Password'),
-        '1234567890'
-        );
-        await user.click(screen.getByRole('button', { name: 'Log in' }));
-
-        expect(loginMock).toHaveBeenCalledTimes(1);
-        expect(loginMock).toHaveBeenCalledWith('umer.safee', '1234567890');
+        try {
+            const user = userEvent.setup();
+            const loginMock = vi.fn().mockResolvedValue(undefined);
+            mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
+    
+            renderPage();
+    
+            await user.type(
+            screen.getByPlaceholderText('Username or email'),
+            'umer.safee'
+            );
+            await user.type(
+            screen.getByPlaceholderText('Password'),
+            '1234567890'
+            );
+            await user.click(screen.getByRole('button', { name: 'Log in' }));
+    
+            expect(loginMock).toHaveBeenCalledTimes(1);
+            expect(loginMock).toHaveBeenCalledWith('umer.safee', '1234567890');
+        } catch ( err ) {
+            console.log("Faild to login: ", err);
+            throw err;
+        }
     });
     
     it('displays error message on failed login', async () => {
-        const user = userEvent.setup();
-        const loginMock = vi.fn()
-        .mockRejectedValue(new Error('Invalid credentials'));
-        mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
-
-        renderPage();
-
-        await user.type(
-            screen.getByPlaceholderText('Username or email'),
-            'umer'
-        );
-        await user.type(
-            screen.getByPlaceholderText('Password'),
-            'wrong'
-        );
-        await user.click(screen.getByRole('button', { name: 'Log in' }));
-
-        expect(
-        await screen.findByText('Invalid credentials')).toBeInTheDocument();
+        try {
+            const user = userEvent.setup();
+            const loginMock = vi.fn()
+            .mockRejectedValue(new Error('Invalid credentials'));
+            mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
+    
+            renderPage();
+    
+            await user.type(
+                screen.getByPlaceholderText('Username or email'),
+                'umer'
+            );
+            await user.type(
+                screen.getByPlaceholderText('Password'),
+                'wrong'
+            );
+            await user.click(screen.getByRole('button', { name: 'Log in' }));
+    
+            expect(
+            await screen.findByText('Invalid credentials')).toBeInTheDocument();
+        } catch ( err ) {
+            console.log("Did not show error message on invalid login: ", err);
+            throw err;
+        }
     });
 
     it('navigates to dashboard on successful login', async () => {
-        const user = userEvent.setup();
-        const loginMock = vi.fn().mockResolvedValue(undefined);
-        mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
-
-        renderPage();
-
-        await user.type(
-        screen.getByPlaceholderText('Username or email'),'umer.safee');
-        
-        await user.type(screen.getByPlaceholderText('Password'),'1234567890');
-        await user.click(screen.getByRole('button', { name: 'Log in' }));
-
-        await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/dashboard', {
-            replace: true
-        });
-        });
+        try {
+            const user = userEvent.setup();
+            const loginMock = vi.fn().mockResolvedValue(undefined);
+            mockAuth.mockReturnValue({ login: loginMock, isLoading: false });
+    
+            renderPage();
+    
+            await user.type(
+            screen.getByPlaceholderText('Username or email'),'umer.safee');
+            
+            await user.type(screen.getByPlaceholderText('Password'),'1234567890');
+            await user.click(screen.getByRole('button', { name: 'Log in' }));
+    
+            await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith('/dashboard', {
+                replace: true
+            });
+            });
+        } catch ( err ) {
+            console.log("Failed to navigate: ", err);
+            throw err;
+        }
     });
 });

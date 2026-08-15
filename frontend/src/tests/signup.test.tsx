@@ -5,6 +5,7 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "../pages/SignupPage";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import type { ReactElement } from "react";
 
 vi.mock("../context/AuthContext", () => (
     {
@@ -45,7 +46,7 @@ const mockNavigate = vi.fn();
 const mockAuth = vi.mocked(useAuth);
 const signupMock = vi.fn().mockResolvedValue(undefined);
 
-function renderPage() {
+function renderPage(): ReturnType<typeof render> {
     return render(<MemoryRouter>
         <SignupPage />
     </MemoryRouter>);
@@ -72,68 +73,86 @@ describe('SignupPage', () => {
     });
 
     it('allows user to type', async () => {
-        renderPage();
-        const user = userEvent.setup();
+        try {
+            renderPage();
+            const user = userEvent.setup();
+    
+            const usernameInput = screen.getByPlaceholderText('Username');
+            const emailInput = screen.getByPlaceholderText("Email");
+            const passwordInput = screen.getByPlaceholderText("Password");
+    
+            await user.type(usernameInput, "umersafee123");
+            await user.type(emailInput, "testemail@test.com");
+            await user.type(passwordInput, "1234567890");
+    
+            expect(usernameInput).toHaveValue("umersafee123");
+            expect(emailInput).toHaveValue("testemail@test.com");
+            expect(passwordInput).toHaveValue("1234567890");
 
-        const usernameInput = screen.getByPlaceholderText('Username');
-        const emailInput = screen.getByPlaceholderText("Email");
-        const passwordInput = screen.getByPlaceholderText("Password");
+        } catch ( err ) {
+            console.log("Failed to type: ", err);
+            throw err;
+        }
 
-        await user.type(usernameInput, "umersafee123");
-        await user.type(emailInput, "testemail@test.com");
-        await user.type(passwordInput, "1234567890");
-
-        expect(usernameInput).toHaveValue("umersafee123");
-        expect(emailInput).toHaveValue("testemail@test.com");
-        expect(passwordInput).toHaveValue("1234567890");
     });
 
     it('allows a signup for valid user', async () => {
-        const user = userEvent.setup();
-        renderPage();
-        
-
-        const usernameInput = screen.getByPlaceholderText('Username');
-        const emailInput = screen.getByPlaceholderText("Email");
-        const passwordInput = screen.getByPlaceholderText("Password");
-
-        
-        await user.type(usernameInput, "testuserabc");
-        await user.type(emailInput, "testmail@gmail.com");
-        await user.type(passwordInput, "1234567890");
-
-        await user.click(await screen.getByRole("button", {name: "Create account"}))
-
-        expect(signupMock).toHaveBeenCalledWith(
-            'testuserabc',
-            'testmail@gmail.com',
-            '1234567890'
-        );
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-            "/dashboard",
-            { replace: true }
-        );
+        try {
+            const user = userEvent.setup();
+            renderPage();
+            
+    
+            const usernameInput = screen.getByPlaceholderText('Username');
+            const emailInput = screen.getByPlaceholderText("Email");
+            const passwordInput = screen.getByPlaceholderText("Password");
+    
+            
+            await user.type(usernameInput, "testuserabc");
+            await user.type(emailInput, "testmail@gmail.com");
+            await user.type(passwordInput, "1234567890");
+    
+            await user.click(await screen.getByRole("button", {name: "Create account"}))
+    
+            expect(signupMock).toHaveBeenCalledWith(
+                'testuserabc',
+                'testmail@gmail.com',
+                '1234567890'
+            );
+    
+            expect(mockNavigate).toHaveBeenCalledWith(
+                "/dashboard",
+                { replace: true }
+            );
+        } catch ( err ) {
+            console.log("Faild to signup: ", err);
+            throw err;
+        }
     });
 
     it('rejects signup for an invalid user', async () => {
-        const user = userEvent.setup();
+        try {
+            const user = userEvent.setup();
+    
+            renderPage();
+    
+            const usernameInput = screen.getByPlaceholderText('Username');
+            const emailInput = screen.getByPlaceholderText("Email");
+            const passwordInput = screen.getByPlaceholderText("Password");
+    
+            const signupMock = vi.fn().mockRejectedValue(error);
+            mockAuth.mockReturnValue({ signup: signupMock, isLoading: false });
+    
+            await user.type(usernameInput, "umer.safee");
+            await user.type(emailInput, "umersafee@gmail.com");
+            await user.type(passwordInput, "1234567890");
+    
+            await user.click(await screen.getByRole("button", {name: "Create account"}));
+            expect(await screen.findByText('Invalid Credentials!')).toBeInTheDocument();
 
-        renderPage();
-
-        const usernameInput = screen.getByPlaceholderText('Username');
-        const emailInput = screen.getByPlaceholderText("Email");
-        const passwordInput = screen.getByPlaceholderText("Password");
-
-        const signupMock = vi.fn().mockRejectedValue(error);
-        mockAuth.mockReturnValue({ signup: signupMock, isLoading: false });
-
-        await user.type(usernameInput, "umer.safee");
-        await user.type(emailInput, "umersafee@gmail.com");
-        await user.type(passwordInput, "1234567890");
-
-        await user.click(await screen.getByRole("button", {name: "Create account"}));
-        expect(await screen.findByText('Invalid Credentials!')).toBeInTheDocument();
+        } catch ( err ) {
+            console.log("Did not reject invalid user: ", err);
+            throw err;
+        }
     });
     
     
