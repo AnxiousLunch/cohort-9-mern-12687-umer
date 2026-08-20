@@ -20,6 +20,9 @@ with tip tap for proper text editing and markdown support.
 
 ### SonarQube
 
+Sonarqube "issues" are mostly removing unused imports or removing nesting as refactors marked differently
+in reliability and maintainability
+
 **Frontend:**
 
 ![](assets/sonarqube_frontend.png)
