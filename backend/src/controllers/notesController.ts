@@ -84,6 +84,7 @@ export async function getUserNoteById(req: Request, res: Response, next: NextFun
 export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.userId;
+        const noteId = Number(req.params.id);
         const { title, content } = req.body;
 
         const note = await prisma.note.findFirst({
@@ -104,6 +105,7 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
             data: {
                 title,
                 content,
+                updatedAt: new Date(lastSeenUpdatedAt)
             },
         });
 

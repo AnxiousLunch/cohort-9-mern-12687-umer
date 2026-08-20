@@ -30,6 +30,9 @@ export const updateNoteSchema = z.object({
   body: z.object({
     title: z.string().trim().min(1).max(255).optional(),
     content: z.string().optional(),
+    lastSeenUpdatedAt: z.string().refine((val) => !Number.isNaN(Date.parse(val)), {
+      message: "lastSeenUpdateAt must be valid datetime string ISO Standard"
+    }),
   }).refine(
     data => data.title !== undefined || data.content !== undefined,
     {
