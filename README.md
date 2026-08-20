@@ -8,28 +8,28 @@ with tip tap for proper text editing and markdown support.
 
 ### Login
 
-[](assets/login.png)
+![](assets/login.png)
 
 ### Signup
 
-[](assets/signup.png)
+![](assets/signup.png)
 
 ### Notes / Dashboard Page
 
-[](assets/dashboard.png)
+![](assets/dashboard.png)
 
 ### SonarQube
 
 **Frontend:**
 
-[](assets/sonarqube_frontend.png)
+![](assets/sonarqube_frontend.png)
 
 
 ---
 
 **Backend:**
 
-[](assets/sonarqube_backend.png)
+![](assets/sonarqube_backend.png)
 
 ## Features
 
