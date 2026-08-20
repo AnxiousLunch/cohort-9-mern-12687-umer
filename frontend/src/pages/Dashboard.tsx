@@ -34,14 +34,15 @@ function Dashboard(): ReactElement {
   const editor = useEditor({
     extensions: [
       StarterKit, Markdown,
-    ], 
+    ],
     content: content,
-    onUpdate: ({editor}) => {
-      const markdown  = editor.getMarkdown();
+    onUpdate: ({ editor }) => {
+      const markdown = editor.getMarkdown();
       setContent(markdown);
+      setNotes((prev) => prev.map((note) => note.id === selectedId ? { ...note, content: markdown } : note));
     }
   });
-      const selectedNote = notes.find((note) => note.id === selectedId);
+  const selectedNote = notes.find((note) => note.id === selectedId);
 
 
   useEffect(() => {
@@ -85,7 +86,7 @@ function Dashboard(): ReactElement {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
         saveTimeoutRef.current = null;
-        
+
       }
       if (selectedNote) {
         await deleteNote(selectedNote.id);
@@ -127,7 +128,7 @@ function Dashboard(): ReactElement {
       skipAutoSave.current = false;
       return;
     }
-    
+
 
     if (!selectedNote) {
       return;
@@ -136,11 +137,11 @@ function Dashboard(): ReactElement {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
-    
+
     setSaveStatus("saving");
 
     saveTimeoutRef.current = setTimeout(async () => {
-      try { 
+      try {
 
         if (!lastUpdateRef.current) {
           setSaveStatus("error");
@@ -150,14 +151,14 @@ function Dashboard(): ReactElement {
         const updatedNote = await updateNote(selectedNote.id, title, content, lastUpdateRef.current);
         setNotes((this_notes) =>
           this_notes.map((note) =>
-             note.id === selectedNote.id ? updatedNote : note
+            note.id === selectedNote.id ? updatedNote : note
           ));
         setSaveStatus("saved");
         lastUpdateRef.current = updatedNote.updatedAt;
 
-      } catch(err) {
+      } catch (err) {
         setSaveStatus("error");
-         if (axios.isAxiosError(err)) {
+        if (axios.isAxiosError(err)) {
           setError(err.response?.data?.msg || "Failed to save ntoe");
         } else if (err instanceof Error) {
           setError(err.message);
@@ -194,8 +195,8 @@ function Dashboard(): ReactElement {
 
     if (selectedNote) {
       lastUpdateRef.current = selectedNote.updatedAt;
-      setTitle(selectedNote.title || ""); 
-      editor.commands.setContent(selectedNote.content || "", {emitUpdate: false});
+      setTitle(selectedNote.title || "");
+      editor.commands.setContent(selectedNote.content || "", { emitUpdate: false });
     } else {
       setTitle("");
       setContent("");
@@ -223,39 +224,39 @@ function Dashboard(): ReactElement {
 
       {/* tooldbar */}
       <div className="relative z-50 flex flex-row h-12 shrink-0 bg-[#3c3836] h-10 shrink-0 items-center gap-2 px-3 rounded-lg mb-3 ">
-        
+
         <button className="rounded-md px-2 py-2 text-xl text-[#ebdbb2] hover:text-[#504945]"
-        
-        onClick={() => {
-          setIsSidebarCollapsed(!isSidebarCollapsed);
-        }}>
+
+          onClick={() => {
+            setIsSidebarCollapsed(!isSidebarCollapsed);
+          }}>
           ☰
         </button>
-        
+
         <div className="flex items-center gap-2">
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-          onClick={() => editor?.chain().focus().toggleBold().run()}>B</button>
+            onClick={() => editor?.chain().focus().toggleBold().run()}>B</button>
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-           onClick={() => editor?.chain().focus().toggleItalic().run()}>I</button>
+            onClick={() => editor?.chain().focus().toggleItalic().run()}>I</button>
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-           onClick={() => editor?.chain().focus().toggleUnderline().run()}>U</button>
+            onClick={() => editor?.chain().focus().toggleUnderline().run()}>U</button>
         </div>
 
         <div className="flex items-center gap-2">
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-           onClick={() => editor?.chain().focus().toggleHeading({level: 1}).run()}>H1</button>
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-          onClick={() => editor?.chain().focus().toggleHeading({level: 2}).run()}>H2</button>
+            onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
         </div>
 
         <div className="flex items-center gap-2">
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-          onClick={() => editor?.chain().focus().toggleBulletList().run()}>•</button>
+            onClick={() => editor?.chain().focus().toggleBulletList().run()}>•</button>
           <button className="rounded-md px-2 py-1 text-sm text-[#ebdbb2] hover:bg-[#504945] transition"
-          onClick={() => editor?.chain().focus().toggleOrderedList().run()}>1.</button>
+            onClick={() => editor?.chain().focus().toggleOrderedList().run()}>1.</button>
         </div>
       </div>
-      
+
       {/* {sidebar continer} */}
       <div className="relative flex flex-1 min-h-0 gap-3">
         {!isSidebarCollapsed && (
@@ -283,8 +284,8 @@ function Dashboard(): ReactElement {
 
 
               <button
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="rounded-md px-2 py-1 text-[#928374] hover:bg-[#504945]">
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                className="rounded-md px-2 py-1 text-[#928374] hover:bg-[#504945]">
                 {isSidebarCollapsed ? "→" : "←"}
               </button>
             </div>
@@ -298,7 +299,7 @@ function Dashboard(): ReactElement {
                 {isSidebarCollapsed ? "+" : "Create Note"}
               </button>
             </div>
-        
+
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {notes.map((note) => (
                 <button
@@ -334,7 +335,10 @@ function Dashboard(): ReactElement {
               <div className="px-6 py-4">
                 <input
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value)
+                    setNotes((prev) => prev.map((note) => note.id === selectedId ? {...note, content: markdown} : note));
+                  }}
                   placeholder="title"
                   className="border-none bg-transparent text-3xl font-semibold outline-none text-[#ebdbb2] placeholder-[#928374]"
                 />
@@ -357,9 +361,9 @@ function Dashboard(): ReactElement {
                 </div>
               
               </div> */}
-              <EditorContent editor={editor} 
-             className="editor"
-                />
+              <EditorContent editor={editor}
+                className="editor"
+              />
 
               <div className="flex items-center justify-between py-3 mt-2">
                 {/* <button
@@ -383,17 +387,17 @@ function Dashboard(): ReactElement {
               </div>
             </div>
           ) : (
-            <div className=" flex flex-col text-[#928374] items-center h-full justify-center"> 
+            <div className=" flex flex-col text-[#928374] items-center h-full justify-center">
               <p>Nothing Selected</p>
               <button
                 onClick={handleCreate}
                 className={`rounded-md border border-[#504945] bg-[#282828] text-[#ebdbb2] hover:bg-[#504945] transition  font-medium px-4 py-4 mt-4 text-sm`}
               >
                 Create Note
-              </button> 
+              </button>
             </div>
-            
-            
+
+
           )}
         </div>
       </div>
