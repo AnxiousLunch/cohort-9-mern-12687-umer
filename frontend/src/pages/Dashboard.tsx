@@ -227,14 +227,17 @@ function Dashboard(): ReactElement {
       return;
     }
 
+    const selectedNote = notes.find((n) => n.id === selectedId);
+
     if (selectedNote) {
+      lastUpdateRef.current = selectedNote.updatedAt;
       setTitle(selectedNote.title || ""); 
       editor.commands.setContent(selectedNote.content || "", {emitUpdate: false});
     } else {
       setTitle("");
       setContent("");
     }
-  }, [selectedNote, editor]);
+  }, [selectedId, editor]);
 
   useEffect(() => {
     if (!error) return;
