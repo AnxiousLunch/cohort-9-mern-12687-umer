@@ -196,7 +196,8 @@ function Dashboard(): ReactElement {
     if (selectedNote) {
       lastUpdateRef.current = selectedNote.updatedAt;
       setTitle(selectedNote.title || "");
-      editor.commands.setContent(selectedNote.content || "", { emitUpdate: false });
+      setContent(selectedNote.content || "");
+      editor.commands.setContent(selectedNote.content || "", { emitUpdate: false, contentType: "markdown" });
     } else {
       setTitle("");
       setContent("");
