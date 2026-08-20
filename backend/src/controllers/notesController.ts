@@ -118,7 +118,7 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
             });
 
             if (!note) {
-                throw new AppError(404, "Note does not exist");
+                throw new AppError(404, "Note not found");
             }
 
             throw new AppError(409, "Note was modified by another session");
@@ -132,7 +132,7 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
         });
 
         if (!actuallyUpdateNote) {
-            throw new AppError(404, "Note not found!");
+            throw new AppError(404, "Note not found");
         }
 
         logger.info(`Updated note ${actuallyUpdateNote.id}`);

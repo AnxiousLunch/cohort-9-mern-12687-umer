@@ -252,7 +252,7 @@ describe("Notes API", () => {
         let lastSeenUpdatedAt: string;
 
         beforeEach(async () => {
-            const res = await createNote({ title: "Original title", content: "Original content" });
+            const res = await createNote({ title: "Original title", content: "Original content", lastSeenUpdatedAt });
             noteId = res.body.note.id;
             lastSeenUpdatedAt = res.body.note.updatedAt;
         });
@@ -278,7 +278,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put(`/api/notes/${noteId}`)
                 .set("Authorization", authHeader)
-                .send({ content: "Only content changed", lastSeenUpdatedAt: new Date().toISOString() });
+                .send({ content: "Only content changed", lastSeenUpdatedAt});
 
             expect(res.status).to.equal(200);
             expect(res.body.note.content).to.equal("Only content changed");
