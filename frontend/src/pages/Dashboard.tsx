@@ -337,7 +337,7 @@ function Dashboard(): ReactElement {
                   value={title}
                   onChange={(e) => {
                     setTitle(e.target.value)
-                    setNotes((prev) => prev.map((note) => note.id === selectedId ? {...note, content: markdown} : note));
+                    setNotes((prev) => prev.map((note) => note.id === selectedId ? {...note, title: e.target.value} : note));
                   }}
                   placeholder="title"
                   className="border-none bg-transparent text-3xl font-semibold outline-none text-[#ebdbb2] placeholder-[#928374]"
