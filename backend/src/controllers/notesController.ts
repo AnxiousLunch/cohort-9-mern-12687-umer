@@ -4,6 +4,7 @@ import logger from "../services/logger.js";
 import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
 import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
+import { act } from "react";
 
 
 export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
@@ -84,37 +85,68 @@ export async function getUserNoteById(req: Request, res: Response, next: NextFun
 export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.userId;
-        const noteId = Number(req.params.id);
-        const { title, content } = req.body;
+        const { title, content, lastSeenUpdatedAt } = req.body;
 
-        const note = await prisma.note.findFirst({
+        const lastSeenDate = new Date(lastSeenUpdatedAt);
+
+        if (Number.isNaN(lastSeenDate)) {
+            throw new AppError(400, "Invalid lastSeen date received");
+        }
+
+        // const note = await prisma.note.findFirst({
+        //     where: {
+        //         id: Number(req.params.id),
+        //         userId,
+        //     },
+        // });
+
+        // if (!note) {
+        //     throw new AppError(404, "Note not found");
+        // }
+
+        const updatedNote = await prisma.note.updateMany({
             where: {
                 id: Number(req.params.id),
                 userId,
-            },
-        });
-
-        if (!note) {
-            throw new AppError(404, "Note not found");
-        }
-
-        const updatedNote = await prisma.note.update({
-            where: {
-                id: Number(req.params.id),
+                updatedAt: lastSeenDate
             },
             data: {
                 title,
                 content,
-                updatedAt: new Date(lastSeenUpdatedAt)
             },
         });
 
-        logger.info(`Updated note ${note.id}`);
+        if (updatedNote.count == 0) {
+            const note = await prisma.note.findFirst({
+                where: {
+                    id: Number(req.params.id),
+                    userId
+                },
+                select: {
+                    id: true
+                }
+            });
+
+            if (!note) {
+                throw new AppError(404, "App does not exist");
+            }
+
+            throw new AppError(409, "Note was modified by another session");
+        }
+
+        const actuallyUpdateNote = await prisma.note.findFirst({
+            where: {
+                id: Number(req.params.id),
+                userId
+            }
+        });
+
+        logger.info(`Updated note ${actuallyUpdateNote!.id}`); // assert here because we check beforehand that note exists or not with the updatedNOte.count check so even if typescript asserts here thaat actuallyUpdatedNote is null, it is in fact not. I rest my case your honor
 
         res.json({
             success: true,
             message: "Note updated",
-            note: updatedNote,
+            note: act,
         });
     } catch (err) {
         next(err);
