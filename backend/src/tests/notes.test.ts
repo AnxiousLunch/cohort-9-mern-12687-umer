@@ -208,7 +208,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .post("/api/notes")
                 .set("Authorization", `Bearer ${other.accessToken}`)
-                .send({ title: "Private", content: "Secret" });
+                .send({ title: "Private", content: "Secret", lastSeenUpdatedAt: new Date().toISOString() });
 
             const res = await request
                 .execute(app)
@@ -249,10 +249,12 @@ describe("Notes API", () => {
 
     describe("PUT /api/notes/:id", () => {
         let noteId: number;
+        let lastSeenUpdatedAt: string;
 
         beforeEach(async () => {
             const res = await createNote({ title: "Original title", content: "Original content" });
             noteId = res.body.note.id;
+            lastSeenUpdatedAt = res.body.note.updatedAt;
         });
 
         it("should update both title and content", async () => {
@@ -260,7 +262,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put(`/api/notes/${noteId}`)
                 .set("Authorization", authHeader)
-                .send({ title: "Updated title", content: "Updated content" });
+                .send({ title: "Updated title", content: "Updated content", lastSeenUpdatedAt: lastSeenUpdatedAt });
 
             expect(res.status).to.equal(200);
             expect(res.body.success).to.be.true;
@@ -276,7 +278,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put(`/api/notes/${noteId}`)
                 .set("Authorization", authHeader)
-                .send({ content: "Only content changed" });
+                .send({ content: "Only content changed", lastSeenUpdatedAt: new Date().toISOString() });
 
             expect(res.status).to.equal(200);
             expect(res.body.note.content).to.equal("Only content changed");
@@ -299,7 +301,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put(`/api/notes/${noteId}`)
                 .set("Authorization", authHeader)
-                .send({ title: "   " });
+                .send({ title: "   ", lastSeenUpdatedAt: new Date().toISOString() });
 
             expect(res.status).to.equal(400);
         });
@@ -309,7 +311,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put("/api/notes/999999999")
                 .set("Authorization", authHeader)
-                .send({ title: "Anything" });
+                .send({ title: "Anything", lastSeenUpdatedAt: new Date().toISOString() });
 
             expect(res.status).to.equal(404);
             expect(res.body.error.message).to.equal("Note not found");
@@ -321,13 +323,13 @@ describe("Notes API", () => {
                 .execute(app)
                 .post("/api/notes")
                 .set("Authorization", `Bearer ${other.accessToken}`)
-                .send({ title: "Private", content: "Secret" });
+                .send({ title: "Private", content: "Secret", lastSeenUpdatedAt: new Date().toISOString() });
 
             const res = await request
                 .execute(app)
                 .put(`/api/notes/${otherNote.body.note.id}`)
                 .set("Authorization", authHeader)
-                .send({ title: "Hacked" });
+                .send({ title: "Hacked", lastSeenUpdatedAt: new Date().toISOString() });
 
             expect(res.status).to.equal(404);
         });
@@ -337,7 +339,7 @@ describe("Notes API", () => {
                 .execute(app)
                 .put("/api/notes/abc")
                 .set("Authorization", authHeader)
-                .send({ title: "Anything" });
+                .send({ title: "Anything", lastSeenUpdatedAt: new Date().toISOString() });
 
             expect(res.status).to.equal(400);
         });
