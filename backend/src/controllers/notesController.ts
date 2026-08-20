@@ -4,8 +4,6 @@ import logger from "../services/logger.js";
 import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
 import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
-import { act } from "react";
-import { appendFile } from "node:fs";
 
 
 export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
