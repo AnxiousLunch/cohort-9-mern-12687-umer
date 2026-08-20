@@ -5,6 +5,7 @@ import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
 import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
 import { act } from "react";
+import { appendFile } from "node:fs";
 
 
 export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
@@ -89,20 +90,9 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
 
         const lastSeenDate = new Date(lastSeenUpdatedAt);
 
-        if (Number.isNaN(lastSeenDate)) {
+        if (Number.isNaN(lastSeenDate.getTime())) {
             throw new AppError(400, "Invalid lastSeen date received");
         }
-
-        // const note = await prisma.note.findFirst({
-        //     where: {
-        //         id: Number(req.params.id),
-        //         userId,
-        //     },
-        // });
-
-        // if (!note) {
-        //     throw new AppError(404, "Note not found");
-        // }
 
         const updatedNote = await prisma.note.updateMany({
             where: {
@@ -141,12 +131,16 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
             }
         });
 
-        logger.info(`Updated note ${actuallyUpdateNote!.id}`); // assert here because we check beforehand that note exists or not with the updatedNOte.count check so even if typescript asserts here thaat actuallyUpdatedNote is null, it is in fact not. I rest my case your honor
+        if (!actuallyUpdateNote) {
+            throw new AppError(404, "Note not found!");
+        }
+
+        logger.info(`Updated note ${actuallyUpdateNote.id}`);
 
         res.json({
             success: true,
             message: "Note updated",
-            note: act,
+            note: actuallyUpdateNote,
         });
     } catch (err) {
         next(err);
