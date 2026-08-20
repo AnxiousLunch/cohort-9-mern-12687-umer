@@ -13,7 +13,6 @@ import { useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "@tiptap/markdown";
-import { unstable_batchedUpdates } from "react-dom";
 
 function Dashboard(): ReactElement {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -32,7 +31,7 @@ function Dashboard(): ReactElement {
   const skipAutoSave = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [lastUpdated, setLastUpdated] = useState<null | string>(null);
+  const lastUpdateRef = useRef<string | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -54,7 +53,7 @@ function Dashboard(): ReactElement {
         setNotes(fetchedNotes);
         if (fetchedNotes.length > 0) {
           setSelectedId(fetchedNotes[0].id);
-          setLastUpdated(fetchedNotes[0].updatedAt)
+          lastUpdateRef.current = fetchedNotes[0].updatedAt;
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -112,6 +111,7 @@ function Dashboard(): ReactElement {
       const createdNote = await createNote("Untitled Noted");
       setNotes((currentNotes) => [createdNote, ...currentNotes]);
       setSelectedId(createdNote.id);
+      lastUpdateRef.current = createdNote.updatedAt;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.msg || "Login failed");
@@ -143,13 +143,19 @@ function Dashboard(): ReactElement {
 
     saveTimeoutRef.current = setTimeout(async () => {
       try { 
-        const updatedNote = await updateNote(selectedNote.id, title, content, lastUpdated!);
+
+        if (!lastUpdateRef.current) {
+          setSaveStatus("error");
+          setError("Missing note update");
+          return;
+        }
+        const updatedNote = await updateNote(selectedNote.id, title, content, lastUpdateRef.current);
         setNotes((this_notes) =>
           this_notes.map((note) =>
              note.id === selectedNote.id ? updatedNote : note
           ));
         setSaveStatus("saved");
-        setLastUpdated(updatedNote.updatedAt);
+        lastUpdateRef.current = updatedNote.updatedAt;
 
       } catch(err) {
         setSaveStatus("error");
@@ -323,7 +329,10 @@ function Dashboard(): ReactElement {
                 key={note.id}
                 onClick={() => {
                   setSelectedId(note.id)
-                  setLastUpdated(note.updatedAt)
+                  const mynote = notes.find((n) => n.id == note.id);
+                  if (mynote) {
+                    lastUpdateRef.current = mynote.updatedAt;
+                  }
                 }}
                 className={`px-2 py-2 w-full rounded-md text-sm transition ${note.id == selectedId ? "bg-[#675e59] text-[#ebdbb2]" : "text-[#ebdbb2] hover:bg-[#50942]"}`}
               >
