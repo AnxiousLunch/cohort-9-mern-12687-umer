@@ -363,7 +363,7 @@ function Dashboard(): ReactElement {
               
               </div> */}
               <EditorContent editor={editor}
-                className="editor"
+                className="editor prose prose-invert"
               />
 
               <div className="flex items-center justify-between py-3 mt-2">
