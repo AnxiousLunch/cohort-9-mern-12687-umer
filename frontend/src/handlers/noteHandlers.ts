@@ -32,9 +32,10 @@ export const createNote = async (
 export const updateNote = async (
   id: number,
   title: string,
-  content: string
+  content: string,
+  lastSeenUpdatedAt: string
 ): Promise<Note> => {
-  const response = await api.put<NoteMutationResponse>(`/notes/${id}`, { title, content });
+  const response = await api.put<NoteMutationResponse>(`/notes/${id}`, { title, content, lastSeenUpdatedAt });
   return response.data.note;
 };
 

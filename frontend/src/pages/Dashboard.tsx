@@ -32,6 +32,8 @@ function Dashboard(): ReactElement {
   const skipAutoSave = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const [lastUpdated, setLastUpdated] = useState<null | string>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit, Markdown,
@@ -52,6 +54,7 @@ function Dashboard(): ReactElement {
         setNotes(fetchedNotes);
         if (fetchedNotes.length > 0) {
           setSelectedId(fetchedNotes[0].id);
+          setLastUpdated(fetchedNotes[0].updatedAt)
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -85,6 +88,7 @@ function Dashboard(): ReactElement {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
         saveTimeoutRef.current = null;
+        
       }
       if (selectedNote) {
         await deleteNote(selectedNote.id);
@@ -139,12 +143,13 @@ function Dashboard(): ReactElement {
 
     saveTimeoutRef.current = setTimeout(async () => {
       try { 
-        const updatedNote = await updateNote(selectedNote.id, title, content);
+        const updatedNote = await updateNote(selectedNote.id, title, content, lastUpdated!);
         setNotes((this_notes) =>
           this_notes.map((note) =>
              note.id === selectedNote.id ? updatedNote : note
           ));
         setSaveStatus("saved");
+        setLastUpdated(updatedNote.updatedAt);
 
       } catch(err) {
         setSaveStatus("error");
@@ -316,7 +321,10 @@ function Dashboard(): ReactElement {
             {notes.map((note) => (
               <button
                 key={note.id}
-                onClick={() => setSelectedId(note.id)}
+                onClick={() => {
+                  setSelectedId(note.id)
+                  setLastUpdated(note.updatedAt)
+                }}
                 className={`px-2 py-2 w-full rounded-md text-sm transition ${note.id == selectedId ? "bg-[#675e59] text-[#ebdbb2]" : "text-[#ebdbb2] hover:bg-[#50942]"}`}
               >
                 {note.title || "Untitled"}
