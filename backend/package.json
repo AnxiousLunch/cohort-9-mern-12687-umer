@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test tsx ./node_modules/mocha/bin/mocha.js \"src/tests/**/*.ts\" --timeout 10000 --exit",
+    "test": "cross-env NODE_ENV=test c8 --reporter=lcov tsx ./node_modules/mocha/bin/mocha.js \"src/tests/**/*.ts\" --timeout 10000 --exit",
     "typecheck": "tsc --noEmit",
     "dev": "tsx watch src/server.ts"
   },
@@ -35,6 +35,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^26.1.2",
     "@types/supertest": "^7.2.1",
+    "c8": "^12.0.0",
     "chai": "^6.2.2",
     "chai-http": "^5.1.2",
     "cookie-parser": "^1.4.7",

@@ -4,6 +4,7 @@ import logger from "../services/logger.js";
 import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
 import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
+import {Prisma} from "../../prisma/generated/prisma/client.js";
 
 
 export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
@@ -84,35 +85,63 @@ export async function getUserNoteById(req: Request, res: Response, next: NextFun
 export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.userId;
-        const { title, content } = req.body;
+        const { title, content, lastSeenUpdatedAt } = req.body;
 
-        const note = await prisma.note.findFirst({
+        const lastSeenDate = new Date(lastSeenUpdatedAt);
+
+        if (Number.isNaN(lastSeenDate.getTime())) {
+            throw new AppError(400, "Invalid lastSeen date received");
+        }
+        try {
+            await prisma.note.update({
+                where: {
+                    id: Number(req.params.id),
+                    userId,
+                    updatedAt: lastSeenDate
+                },
+                data: {
+                    title,
+                    content,
+                },
+            });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+                const note = await prisma.note.findFirst({
+                    where: {
+                        id:Number(req.params.id) ,
+                        userId,
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
+
+                if (!note) {
+                    throw new AppError(404, "Note not found");
+                }
+
+                throw new AppError(409, "Note was modified by another session");
+            }
+
+            throw error;
+        }
+
+        const actuallyUpdateNote = await prisma.note.findFirst({
             where: {
                 id: Number(req.params.id),
-                userId,
-            },
+                userId
+            }
         });
 
-        if (!note) {
+        if (!actuallyUpdateNote) {
             throw new AppError(404, "Note not found");
         }
 
-        const updatedNote = await prisma.note.update({
-            where: {
-                id: Number(req.params.id),
-            },
-            data: {
-                title,
-                content,
-            },
-        });
-
-        logger.info(`Updated note ${note.id}`);
+        logger.info(`Updated note ${actuallyUpdateNote.id}`);
 
         res.json({
             success: true,
-            message: "Note updated",
-            note: updatedNote,
+            note: actuallyUpdateNote,
         });
     } catch (err) {
         next(err);
