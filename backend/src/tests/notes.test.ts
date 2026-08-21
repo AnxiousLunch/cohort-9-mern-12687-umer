@@ -252,9 +252,14 @@ describe("Notes API", () => {
         let lastSeenUpdatedAt: string;
 
         beforeEach(async () => {
-            const res = await createNote({ title: "Original title", content: "Original content", lastSeenUpdatedAt });
-            noteId = res.body.note.id;
-            lastSeenUpdatedAt = res.body.note.updatedAt;
+            try {
+                const res = await createNote({ title: "Original title", content: "Original content", lastSeenUpdatedAt });
+                noteId = res.body.note.id;
+                lastSeenUpdatedAt = res.body.note.updatedAt;
+            } catch (err) {
+                console.log("Failed to create note");
+                throw err;
+            }
         });
 
         it("should update both title and content", async () => {
