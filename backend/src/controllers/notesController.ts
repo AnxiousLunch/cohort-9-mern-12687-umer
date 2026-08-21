@@ -4,6 +4,7 @@ import logger from "../services/logger.js";
 import prisma from "../../prisma/adapter.js";
 import { AppError } from "../middleware/error_middleware.js";
 import type { NoteInput, NoteUpdate } from "../zod/note_schema.js";
+import {Prisma} from "../../prisma/generated/prisma/client.js";
 
 
 export async function createNote(req: Request<{}, {}, NoteInput>, res: Response, next: NextFunction) {
@@ -91,35 +92,39 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
         if (Number.isNaN(lastSeenDate.getTime())) {
             throw new AppError(400, "Invalid lastSeen date received");
         }
-
-        const updatedNote = await prisma.note.updateMany({
-            where: {
-                id: Number(req.params.id),
-                userId,
-                updatedAt: lastSeenDate
-            },
-            data: {
-                title,
-                content,
-            },
-        });
-
-        if (updatedNote.count == 0) {
-            const note = await prisma.note.findFirst({
+        let updatedNote;
+        try {
+            updatedNote = await prisma.note.update({
                 where: {
                     id: Number(req.params.id),
-                    userId
+                    userId,
+                    updatedAt: lastSeenDate
                 },
-                select: {
-                    id: true
-                }
+                data: {
+                    title,
+                    content,
+                },
             });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+                const note = await prisma.note.findFirst({
+                    where: {
+                        id:Number(req.params.id) ,
+                        userId,
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
 
-            if (!note) {
-                throw new AppError(404, "Note not found");
+                if (!note) {
+                    throw new AppError(404, "Note not found");
+                }
+
+                throw new AppError(409, "Note was modified by another session");
             }
 
-            throw new AppError(409, "Note was modified by another session");
+            throw error;
         }
 
         const actuallyUpdateNote = await prisma.note.findFirst({
