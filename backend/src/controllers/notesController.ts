@@ -92,9 +92,8 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
         if (Number.isNaN(lastSeenDate.getTime())) {
             throw new AppError(400, "Invalid lastSeen date received");
         }
-        let updatedNote;
         try {
-            updatedNote = await prisma.note.update({
+            await prisma.note.update({
                 where: {
                     id: Number(req.params.id),
                     userId,
