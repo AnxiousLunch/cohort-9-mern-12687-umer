@@ -137,7 +137,6 @@ export async function updateUserNote(req: Request<{id: string}, {}, NoteUpdate>,
 
         res.json({
             success: true,
-            message: "Note updated",
             note: actuallyUpdateNote,
         });
     } catch (err) {
